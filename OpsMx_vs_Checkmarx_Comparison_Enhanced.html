@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OpsMx vs Checkmarx - Enterprise Software Delivery Security</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f7f9fc;
+      --surface: #ffffff;
+      --surface-2: #f1f5f9;
+      --surface-3: #e8eef7;
+      --text: #102033;
+      --muted: #5b6b7f;
+      --line: #d9e2ee;
+      --line-soft: #e8eef6;
+      --blue: #175cd3;
+      --blue-2: #0b4f9c;
+      --blue-soft: #e8f1ff;
+      --green: #157f3f;
+      --green-soft: #e8f7ee;
+      --amber: #9a5b00;
+      --amber-soft: #fff3d6;
+      --gray-chip: #475569;
+      --gray-soft: #eef2f7;
+      --shadow: 0 18px 45px rgba(15, 23, 42, .08);
+      --shadow-soft: 0 8px 26px rgba(15, 23, 42, .06);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --nav-width: 260px;
+      --content-width: 1220px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1220;
+        --surface: #101827;
+        --surface-2: #121d2f;
+        --surface-3: #1b2a42;
+        --text: #edf4ff;
+        --muted: #aebdd0;
+        --line: #22324a;
+        --line-soft: #1a2940;
+        --blue: #74a8ff;
+        --blue-2: #94bdff;
+        --blue-soft: #132844;
+        --green: #76d49a;
+        --green-soft: #12351f;
+        --amber: #f2c66d;
+        --amber-soft: #392c0f;
+        --gray-chip: #c8d3e2;
+        --gray-soft: #1a2638;
+        --shadow: 0 18px 45px rgba(0, 0, 0, .25);
+        --shadow-soft: 0 8px 26px rgba(0, 0, 0, .18);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 28px;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(23, 92, 211, .10), transparent 30rem),
+        linear-gradient(180deg, var(--bg), var(--bg));
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      line-height: 1.5;
+      letter-spacing: 0;
+    }
+
+    a { color: inherit; }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    :focus-visible {
+      outline: 3px solid rgba(23, 92, 211, .45);
+      outline-offset: 3px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: var(--nav-width) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 18px;
+      border-right: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      backdrop-filter: blur(16px);
+      overflow-y: auto;
+      z-index: 30;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px 22px;
+      border-bottom: 1px solid var(--line-soft);
+      margin-bottom: 18px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #0b4f9c, #2475f0);
+      box-shadow: 0 10px 28px rgba(23, 92, 211, .28);
+      font-weight: 800;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    .brand span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .nav-label {
+      padding: 0 8px 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nav-list a {
+      display: flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: background .18s ease, color .18s ease;
+    }
+
+    .nav-list a:hover,
+    .nav-list a.active {
+      background: var(--blue-soft);
+      color: var(--blue-2);
+    }
+
+    .document {
+      width: min(100%, var(--content-width));
+      margin: 0 auto;
+      padding: 44px 32px 72px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: clamp(34px, 5vw, 64px);
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--surface) 94%, var(--blue-soft)), var(--surface)),
+        var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -42% 40%;
+      height: 360px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(23, 92, 211, .12), transparent 62%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      color: var(--blue-2);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      letter-spacing: 0;
+      line-height: 1.08;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(42px, 7vw, 82px);
+      font-weight: 760;
+    }
+
+    h2 {
+      font-size: clamp(26px, 3vw, 40px);
+      font-weight: 730;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .hero-subtitle {
+      max-width: 760px;
+      margin-top: 24px;
+      font-size: clamp(17px, 2vw, 21px);
+      color: var(--muted);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 32px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--surface) 74%, var(--surface-2));
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .section {
+      margin-top: 64px;
+      scroll-margin-top: 32px;
+    }
+
+    .section-header {
+      display: grid;
+      gap: 12px;
+      max-width: 820px;
+      margin-bottom: 24px;
+    }
+
+    .section-kicker {
+      color: var(--blue-2);
+      font-size: 13px;
+      font-weight: 760;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card,
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card {
+      padding: 20px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--blue) 28%, var(--line));
+      box-shadow: var(--shadow);
+    }
+
+    .card p {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .controls {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: grid;
+      gap: 14px;
+      margin-bottom: 16px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--surface) 94%, transparent);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      padding: 0 12px;
+    }
+
+    .search-box svg {
+      flex: 0 0 auto;
+      color: var(--muted);
+    }
+
+    .search-box input {
+      width: 100%;
+      min-height: 42px;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .result-count {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .filter-btn,
+    .category-toggle {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: background .18s ease, color .18s ease, border-color .18s ease;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active,
+    .category-toggle:hover {
+      border-color: color-mix(in srgb, var(--blue) 30%, var(--line));
+      background: var(--blue-soft);
+      color: var(--blue-2);
+    }
+
+    .table-shell {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: auto;
+      max-height: 78vh;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1120px;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line-soft);
+      padding: 16px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      white-space: nowrap;
+    }
+
+    th:first-child,
+    td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 4;
+      background: inherit;
+      box-shadow: 1px 0 0 var(--line-soft);
+    }
+
+    th:first-child {
+      z-index: 7;
+      background: var(--surface-2);
+    }
+
+    tbody tr {
+      background: var(--surface);
+      transition: background .16s ease;
+    }
+
+    tbody tr:nth-child(odd of .capability-row) {
+      background: color-mix(in srgb, var(--surface) 92%, var(--surface-2));
+    }
+
+    tbody tr.capability-row:hover {
+      background: var(--blue-soft);
+    }
+
+    .category-row td {
+      position: sticky;
+      left: 0;
+      z-index: 6;
+      padding: 12px 16px;
+      background: color-mix(in srgb, var(--blue-soft) 78%, var(--surface));
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .category-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      padding: 2px 0;
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .category-button svg {
+      transition: transform .18s ease;
+    }
+
+    .category-button[aria-expanded="false"] svg {
+      transform: rotate(-90deg);
+    }
+
+    .capability-name {
+      display: grid;
+      gap: 6px;
+      min-width: 220px;
+      font-weight: 720;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .badge svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .badge.native {
+      background: var(--blue-soft);
+      color: var(--blue-2);
+    }
+
+    .badge.supported {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .badge.integrated {
+      background: color-mix(in srgb, var(--blue-soft) 65%, var(--green-soft));
+      color: var(--blue-2);
+    }
+
+    .badge.partial {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .badge.none {
+      background: var(--gray-soft);
+      color: var(--gray-chip);
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .diagram {
+      display: grid;
+      gap: 16px;
+      padding: 22px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(9, minmax(90px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .flow.compact {
+      grid-template-columns: repeat(7, minmax(92px, 1fr));
+    }
+
+    .node {
+      position: relative;
+      min-height: 86px;
+      display: grid;
+      gap: 6px;
+      align-content: center;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    .node:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -11px;
+      width: 11px;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .node strong {
+      font-size: 14px;
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .node.appsec {
+      border-color: color-mix(in srgb, var(--green) 32%, var(--line));
+      background: color-mix(in srgb, var(--green-soft) 42%, var(--surface));
+    }
+
+    .node.governance {
+      border-color: color-mix(in srgb, var(--blue) 34%, var(--line));
+      background: color-mix(in srgb, var(--blue-soft) 60%, var(--surface));
+    }
+
+    .context-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .context-card {
+      display: grid;
+      min-height: 118px;
+      align-content: start;
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    .decision {
+      margin-top: 16px;
+      padding: 20px;
+      border: 1px solid color-mix(in srgb, var(--blue) 42%, var(--line));
+      border-radius: 14px;
+      background: var(--blue-soft);
+      text-align: center;
+      font-weight: 800;
+      color: var(--blue-2);
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .feature-item {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    .feature-item p {
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .reference-list,
+    .glossary-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .reference-list li,
+    .glossary-list li {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    .reference-list a {
+      color: var(--blue-2);
+      font-weight: 700;
+    }
+
+    .disclaimer {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-2);
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeIn .6s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1120px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav-list {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .card-grid,
+      .stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow,
+      .flow.compact,
+      .context-grid,
+      .feature-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .node:not(:last-child)::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .document {
+        padding: 24px 16px 48px;
+      }
+
+      .hero {
+        border-radius: 16px;
+        padding: 28px;
+      }
+
+      .nav-list,
+      .card-grid,
+      .stat-grid,
+      .flow,
+      .flow.compact,
+      .context-grid,
+      .feature-list,
+      .search-row {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        position: static;
+      }
+
+      .result-count {
+        white-space: normal;
+      }
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      body {
+        background: #fff;
+        color: #111827;
+      }
+
+      .shell {
+        display: block;
+      }
+
+      .sidebar,
+      .controls {
+        display: none !important;
+      }
+
+      .document {
+        width: 100%;
+        padding: 0;
+      }
+
+      .hero,
+      .card,
+      .panel,
+      .stat,
+      .feature-item,
+      .reference-list li,
+      .glossary-list li,
+      .disclaimer {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      .section {
+        break-before: auto;
+        margin-top: 28px;
+      }
+
+      .table-shell {
+        max-height: none;
+        overflow: visible;
+        box-shadow: none;
+      }
+
+      table {
+        min-width: 0;
+        font-size: 10px;
+      }
+
+      th,
+      td,
+      th:first-child,
+      td:first-child {
+        position: static;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Page navigation">
+      <div class="brand" aria-label="OpsMx competitive intelligence">
+        <div class="brand-mark" aria-hidden="true">O</div>
+        <div>
+          <strong>Enterprise Battlecard</strong>
+          <span>July 2026</span>
+        </div>
+      </div>
+      <div class="nav-label">Contents</div>
+      <ul class="nav-list" id="navList"></ul>
+    </aside>
+
+    <main class="document">
+      <header class="hero fade-in" id="hero">
+        <p class="eyebrow">Enterprise Software Delivery Security</p>
+        <h1>Technical Capability Comparison</h1>
+        <p class="hero-subtitle">OpsMx vs Checkmarx for enterprise teams evaluating application security, software supply chain assurance, and deployment governance prior to production promotion.</p>
+        <div class="hero-meta" aria-label="Document metadata">
+          <span class="meta-pill">OpsMx vs Checkmarx</span>
+          <span class="meta-pill">July 2026</span>
+          <span class="meta-pill">Offline HTML</span>
+          <span class="meta-pill">CISO Workshop Ready</span>
+        </div>
+      </header>
+
+      <section class="section fade-in" id="summary" data-nav="Executive Summary">
+        <div class="section-header">
+          <span class="section-kicker">Executive Summary</span>
+          <h2>From vulnerability visibility to deployment decisions</h2>
+          <p>Traditional AppSec platforms help answer which vulnerabilities exist. OpsMx extends the decision point into delivery by evaluating whether a specific application version should reach an environment.</p>
+        </div>
+        <div class="card-grid">
+          <article class="card">
+            <h3>Platform Positioning</h3>
+            <p>Checkmarx is represented as an enterprise AppSec platform. OpsMx is positioned as a software delivery security and governance layer that can use findings from multiple scanners.</p>
+          </article>
+          <article class="card">
+            <h3>Shared Capabilities</h3>
+            <p>Both approaches address important areas such as SAST, SCA, DAST, secrets, APIs, containers, reporting, and remediation workflows.</p>
+          </article>
+          <article class="card">
+            <h3>OpsMx Native Differentiators</h3>
+            <p>Native deployment firewall, DBOM, delivery context, BYOS aggregation, approval evidence, and policy enforcement before production promotion.</p>
+          </article>
+          <article class="card">
+            <h3>Evaluation Methodology</h3>
+            <p>Capabilities are classified from the source file and reviewed public documentation. Undocumented areas are marked neutrally rather than treated as product gaps.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="stats" data-nav="Quick Statistics">
+        <div class="section-header">
+          <span class="section-kicker">Quick Statistics</span>
+          <h2>Capability coverage at a glance</h2>
+          <p>Counts are computed from the matrix data rendered on this page.</p>
+        </div>
+        <div class="stat-grid" id="statsGrid" aria-live="polite"></div>
+      </section>
+
+      <section class="section fade-in" id="matrix" data-nav="Capability Matrix">
+        <div class="section-header">
+          <span class="section-kicker">Capability Matrix</span>
+          <h2>Technical capabilities by category</h2>
+          <p>Search and filter the matrix to support executive workshops, RFP responses, and architecture reviews.</p>
+        </div>
+        <div class="controls" aria-label="Capability matrix controls">
+          <div class="search-row">
+            <label class="search-box" for="matrixSearch">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m21 21-4.2-4.2m1.2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <input id="matrixSearch" type="search" autocomplete="off" placeholder="Search capabilities, notes, value, or status" aria-label="Search capability matrix">
+            </label>
+            <span class="result-count" id="resultCount"></span>
+          </div>
+          <div class="filter-row" id="filterRow" role="toolbar" aria-label="Capability category filters"></div>
+        </div>
+        <div class="table-shell" tabindex="0" aria-label="Scrollable capability matrix">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Capability</th>
+                <th scope="col">OpsMx</th>
+                <th scope="col">Checkmarx</th>
+                <th scope="col">Business Value</th>
+                <th scope="col">Technical Notes</th>
+                <th scope="col">Optional Notes</th>
+              </tr>
+            </thead>
+            <tbody id="matrixBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="pipeline" data-nav="Pipeline Coverage">
+        <div class="section-header">
+          <span class="section-kicker">Pipeline Coverage</span>
+          <h2>Coverage across the delivery path</h2>
+          <p>Checkmarx focuses strongly on AppSec discovery and remediation. OpsMx extends controls into artifact, CD, Kubernetes, and production promotion decisions.</p>
+        </div>
+        <div class="panel diagram">
+          <div class="flow" aria-label="Pipeline coverage diagram">
+            <div class="node appsec"><strong>Developer</strong><span>IDE and code workflow</span></div>
+            <div class="node appsec"><strong>Git</strong><span>Repository and branch posture</span></div>
+            <div class="node appsec"><strong>PR</strong><span>Scan and remediation</span></div>
+            <div class="node appsec"><strong>CI</strong><span>Build-time security evidence</span></div>
+            <div class="node appsec"><strong>Security</strong><span>SAST, SCA, DAST, secrets</span></div>
+            <div class="node governance"><strong>Artifact</strong><span>Image and package context</span></div>
+            <div class="node governance"><strong>Registry</strong><span>Artifact provenance</span></div>
+            <div class="node governance"><strong>CD/Kubernetes</strong><span>Deployment policy enforcement</span></div>
+            <div class="node governance"><strong>Production</strong><span>DBOM and runtime posture</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="governance" data-nav="Deployment Governance">
+        <div class="section-header">
+          <span class="section-kicker">Deployment Governance</span>
+          <h2>Policy enforcement before production promotion</h2>
+          <p>Deployment governance uses delivery evidence, security findings, approvals, and environment context to allow, block, or require exception handling for a release.</p>
+        </div>
+        <div class="panel diagram">
+          <div class="flow compact">
+            <div class="node"><strong>Build</strong><span>Produce artifact</span></div>
+            <div class="node appsec"><strong>Scan</strong><span>Collect security findings</span></div>
+            <div class="node governance"><strong>Policy</strong><span>Evaluate organizational rules</span></div>
+            <div class="node governance"><strong>Approval</strong><span>Attach evidence and exception state</span></div>
+            <div class="node governance"><strong>Deployment Firewall</strong><span>Allow or block promotion</span></div>
+            <div class="node governance"><strong>Production</strong><span>Observe deployed version</span></div>
+            <div class="node governance"><strong>DBOM</strong><span>Record what reached the environment</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="context" data-nav="Enterprise Context">
+        <div class="section-header">
+          <span class="section-kicker">Enterprise Context Diagram</span>
+          <h2>Security findings become deployment decisions</h2>
+          <p>The deployment decision combines security posture with business, runtime, exposure, identity, and policy context.</p>
+        </div>
+        <div class="panel diagram">
+          <div class="context-grid">
+            <div class="context-card"><strong>Security Findings</strong><p>SAST, SCA, container, secrets, DAST, API, and policy results.</p></div>
+            <div class="context-card"><strong>Business Context</strong><p>Application criticality, ownership, service tier, and customer impact.</p></div>
+            <div class="context-card"><strong>Runtime Context</strong><p>Environment, cluster, namespace, active deployment, and service state.</p></div>
+            <div class="context-card"><strong>Exposure</strong><p>Internet reachability, dependency impact, exploitability, and risk severity.</p></div>
+            <div class="context-card"><strong>Identity and Policies</strong><p>Roles, approvals, exceptions, and deployment requirements.</p></div>
+          </div>
+          <div class="decision">Deployment Decision: allow, block, or require governed exception</div>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="byos" data-nav="BYOS Architecture">
+        <div class="section-header">
+          <span class="section-kicker">BYOS Architecture</span>
+          <h2>Bring your own scanner, govern with unified context</h2>
+          <p>OpsMx can preserve existing scanner investments while normalizing evidence for risk, policy, and deployment governance workflows.</p>
+        </div>
+        <div class="panel diagram">
+          <div class="flow compact">
+            <div class="node appsec"><strong>Multiple Scanners</strong><span>Semgrep, SonarQube, Trivy, ZAP, Snyk, Xray, and others</span></div>
+            <div class="node governance"><strong>OpsMx</strong><span>Ingest delivery and security evidence</span></div>
+            <div class="node governance"><strong>Unified Risk</strong><span>Normalize findings and posture</span></div>
+            <div class="node governance"><strong>Deployment Governance</strong><span>Evaluate controls before promotion</span></div>
+            <div class="node governance"><strong>Production</strong><span>Track deployed versions and DBOM evidence</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="dbom" data-nav="DBOM">
+        <div class="section-header">
+          <span class="section-kicker">DBOM</span>
+          <h2>SBOM documents what exists. DBOM documents what reached production.</h2>
+          <p>SBOM inventory supports component risk management. DBOM extends the evidence chain by recording deployed artifacts, delivery actions, approvals, and environment state.</p>
+        </div>
+        <div class="feature-list">
+          <article class="feature-item"><h3>SBOM</h3><p>Lists software components, dependencies, licenses, package identifiers, and vulnerability associations.</p></article>
+          <article class="feature-item"><h3>CBOM</h3><p>Tracks cryptographic assets and related posture where cryptographic evidence is required for governance.</p></article>
+          <article class="feature-item"><h3>DBOM</h3><p>Records the version that was deployed, where it was deployed, how it was approved, and which controls were evaluated.</p></article>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="ai-security" data-nav="AI Security">
+        <div class="section-header">
+          <span class="section-kicker">AI Security</span>
+          <h2>AI-assisted development still requires governed release control</h2>
+          <p>AI capabilities are useful when they reduce remediation time and help validate generated code against security and deployment policies.</p>
+        </div>
+        <div class="feature-list">
+          <article class="feature-item"><h3>AI Generated Code Validation</h3><p>Validate AI-generated code against organizational security and deployment policies before release.</p></article>
+          <article class="feature-item"><h3>AI Model Security</h3><p>Assess AI and ML model artifacts where model posture is part of the delivery risk decision.</p></article>
+          <article class="feature-item"><h3>Remediation and PR Workflow</h3><p>Use AI-assisted remediation and governed pull-request workflows to reduce manual remediation effort.</p></article>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="platform" data-nav="Platform Capabilities">
+        <div class="section-header">
+          <span class="section-kicker">Platform Capabilities</span>
+          <h2>Enterprise controls for scaled software delivery</h2>
+          <p>The target architecture supports centralized posture, delegated ownership, audit evidence, policy management, and integration into existing software delivery systems.</p>
+        </div>
+        <div class="feature-list">
+          <article class="feature-item"><h3>Risk Posture</h3><p>Organize application, artifact, service, and deployment posture into a single operating view for security and engineering leaders.</p></article>
+          <article class="feature-item"><h3>Policy Operations</h3><p>Manage deployment rules, exceptions, approval requirements, and compliance controls as operational policy.</p></article>
+          <article class="feature-item"><h3>Audit Evidence</h3><p>Preserve evidence across scans, approvals, deployment outcomes, exceptions, and runtime context.</p></article>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="integrations" data-nav="Integrations">
+        <div class="section-header">
+          <span class="section-kicker">Integrations</span>
+          <h2>Connect to the delivery systems enterprises already use</h2>
+          <p>Integration coverage should be evaluated by repository, CI, artifact registry, CD, Kubernetes, scanner, ticketing, notification, and observability requirements.</p>
+        </div>
+        <div class="feature-list">
+          <article class="feature-item"><h3>Source and CI</h3><p>GitHub, GitLab, Bitbucket, Jenkins, and related build systems provide development and pipeline evidence.</p></article>
+          <article class="feature-item"><h3>Scanners and Registries</h3><p>Scanner and registry integrations provide findings, SBOM data, artifact metadata, and image posture.</p></article>
+          <article class="feature-item"><h3>CD and Operations</h3><p>Argo CD, Spinnaker, Kubernetes, Jira, Slack, ServiceNow, and observability tools support governed delivery workflows.</p></article>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="compliance" data-nav="Compliance">
+        <div class="section-header">
+          <span class="section-kicker">Compliance</span>
+          <h2>Continuous evidence for regulated delivery</h2>
+          <p>Compliance support is strongest when controls are evaluated continuously and tied to the exact artifact and deployment event.</p>
+        </div>
+        <div class="feature-list">
+          <article class="feature-item"><h3>Framework Alignment</h3><p>Map delivery and security controls to NIST, FedRAMP, PCI DSS, HIPAA, OpenSSF, OWASP, CIS Kubernetes, and similar frameworks.</p></article>
+          <article class="feature-item"><h3>Evidence Capture</h3><p>Retain audit-ready records for scans, policy results, approvals, exceptions, and deployed versions.</p></article>
+          <article class="feature-item"><h3>Operational Enforcement</h3><p>Move compliance from reporting after release to enforcement during the promotion workflow.</p></article>
+        </div>
+      </section>
+
+      <section class="section fade-in" id="glossary" data-nav="Glossary">
+        <div class="section-header">
+          <span class="section-kicker">Glossary</span>
+          <h2>Terminology used in this comparison</h2>
+        </div>
+        <ul class="glossary-list">
+          <li><strong>DBOM:</strong> Deployment Bill of Materials. Evidence of what was deployed, where it was deployed, and how release controls were applied.</li>
+          <li><strong>BYOS:</strong> Bring Your Own Scanner. A model for aggregating results from existing security tools rather than requiring a single scanner stack.</li>
+          <li><strong>Deployment Firewall:</strong> A policy enforcement point that evaluates release evidence before allowing or blocking deployment.</li>
+          <li><strong>Application Security Testing:</strong> Static, dynamic, dependency, API, container, secrets, and infrastructure scanning used to identify security risk.</li>
+        </ul>
+      </section>
+
+      <section class="section fade-in" id="references" data-nav="References">
+        <div class="section-header">
+          <span class="section-kicker">References</span>
+          <h2>Reviewed source material</h2>
+          <p>References are included for transparency. The file itself remains fully offline after it is saved.</p>
+        </div>
+        <ul class="reference-list">
+          <li><a href="https://docs.opsmx.com/opsmx-delivery-shield-platform/user-guide/deployment-firewall">OpsMx Deployment Firewall documentation</a></li>
+          <li><a href="https://docs.opsmx.com/opsmx-delivery-shield-platform">OpsMx Delivery Shield overview</a></li>
+          <li><a href="https://docs.checkmarx.com/en/34965-88647-checkmarx-one-bundles-overview.html">Checkmarx One bundles overview</a></li>
+          <li><a href="https://docs.checkmarx.com/en/34965-519281-checkmarx-one-api-changelog.html">Checkmarx One API changelog</a></li>
+          <li><a href="https://docs.checkmarx.com/en/34965-162285-api-security.html">Checkmarx API Security documentation</a></li>
+        </ul>
+      </section>
+
+      <section class="section fade-in" id="disclaimer" data-nav="Disclaimer">
+        <div class="section-header">
+          <span class="section-kicker">Disclaimer</span>
+          <h2>Use as evaluation guidance, not a substitute for vendor validation</h2>
+        </div>
+        <div class="disclaimer">
+          <p>This comparison is based on the provided source document and reviewed public documentation available during July 2026. Product capabilities, packaging, and licensing can change. Validate final decisions with current vendor documentation, account teams, and hands-on proof of value work. Undocumented areas are described neutrally and should not be interpreted as confirmed product absence.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    "use strict";
+
+    const filters = [
+      { id: "all", label: "All", categories: [] },
+      { id: "appsec", label: "AppSec", categories: ["Core AppSec", "Developer Experience", "Integrations"] },
+      { id: "governance", label: "Governance", categories: ["Deployment Governance", "Policy", "GitOps"] },
+      { id: "ai", label: "AI", categories: ["AI"] },
+      { id: "platform", label: "Platform", categories: ["Platform", "Identity", "Observability"] },
+      { id: "compliance", label: "Compliance", categories: ["Compliance"] },
+      { id: "supply", label: "Supply Chain", categories: ["Supply Chain"] },
+      { id: "runtime", label: "Runtime", categories: ["Runtime", "Kubernetes"] }
+    ];
+
+    const matrixRows = [
+      { category: "Core AppSec", capability: "SAST", opsmx: "Supported", checkmarx: "Supported", businessValue: "Identify source-code vulnerabilities before release.", technicalNotes: "Both platforms support enterprise static analysis workflows.", optionalNotes: "Preserved from the source matrix.", tags: ["appsec", "source"] },
+      { category: "Core AppSec", capability: "SCA", opsmx: "Supported", checkmarx: "Supported", businessValue: "Expose open-source dependency and license risk.", technicalNotes: "Both platforms support software composition analysis and SBOM-related workflows.", optionalNotes: "Preserved from the source matrix.", tags: ["appsec", "supply"] },
+      { category: "Core AppSec", capability: "DAST", opsmx: "Supported", checkmarx: "Supported", businessValue: "Test running applications and APIs for exploitable behavior.", technicalNotes: "OpsMx can integrate DAST evidence; Checkmarx documents DAST as part of Checkmarx One packaging.", optionalNotes: "DAST depth should be validated in a proof of value.", tags: ["appsec", "runtime"] },
+      { category: "Core AppSec", capability: "Secrets Detection", opsmx: "Supported", checkmarx: "Supported", businessValue: "Reduce credential leakage in source and pipelines.", technicalNotes: "Both approaches support secrets detection workflows.", optionalNotes: "Check repository, CI, and branch coverage during evaluation.", tags: ["appsec", "developer"] },
+      { category: "Core AppSec", capability: "API Security", opsmx: "Integrated", checkmarx: "Supported", businessValue: "Improve visibility into API attack surface and API-linked findings.", technicalNotes: "Checkmarx documents API Security in Checkmarx One; OpsMx can ingest scanner evidence for governance.", optionalNotes: "Evaluate API inventory and shadow API detection requirements separately.", tags: ["appsec", "api"] },
+      { category: "Core AppSec", capability: "Container Security", opsmx: "Integrated", checkmarx: "Supported", businessValue: "Assess container image risk before runtime deployment.", technicalNotes: "OpsMx supports container evidence through scanner and registry integrations; Checkmarx lists container security in platform packaging.", optionalNotes: "Confirm base image, package, and runtime findings needed by policy.", tags: ["appsec", "container"] },
+      { category: "Core AppSec", capability: "IaC Security", opsmx: "Integrated", checkmarx: "Supported", businessValue: "Detect risky infrastructure definitions before deployment.", technicalNotes: "Checkmarx lists IaC Security in enterprise packaging; OpsMx can ingest IaC scanner signals such as TFsec integrations.", optionalNotes: "Assess Terraform, Kubernetes manifest, and cloud template support.", tags: ["appsec", "iac"] },
+      { category: "Core AppSec", capability: "Mobile Application Scanning", opsmx: "Integrated", checkmarx: "Supported", businessValue: "Include mobile artifacts in security governance.", technicalNotes: "OpsMx documentation lists mobile artifacts and MobSF integration; Checkmarx mobile support should be validated for target languages and build flows.", optionalNotes: "Use neutral validation for mobile-specific coverage.", tags: ["appsec", "mobile"] },
+      { category: "Core AppSec", capability: "Repository Health", opsmx: "Integrated", checkmarx: "Supported", businessValue: "Identify repository configuration risk early.", technicalNotes: "Checkmarx lists Repo Health; OpsMx can use repository posture as deployment policy evidence.", optionalNotes: "Useful for branch protection and workflow permission controls.", tags: ["appsec", "git"] },
+      { category: "Core AppSec", capability: "OpenSSF Scorecard", opsmx: "Supported", checkmarx: "Supported", businessValue: "Measure repository supply chain posture using recognized checks.", technicalNotes: "OpsMx documentation includes OpenSSF Scorecard compliance automation; Checkmarx integrations reference OSSF Scorecard findings.", optionalNotes: "Score interpretation should be tied to policy thresholds.", tags: ["appsec", "supply"] },
+      { category: "Core AppSec", capability: "Malicious Package Detection", opsmx: "Integrated", checkmarx: "Supported", businessValue: "Reduce exposure to compromised package ecosystems.", technicalNotes: "Checkmarx lists malicious package detection; OpsMx can incorporate package risk into delivery policy when scanner evidence is available.", optionalNotes: "Validate package ecosystem coverage.", tags: ["appsec", "supply"] },
+      { category: "Core AppSec", capability: "Vulnerability Deduplication", opsmx: "Supported", checkmarx: "Supported", businessValue: "Reduce repeated triage across duplicate findings.", technicalNotes: "OpsMx release notes describe deduplication; Checkmarx provides unified findings and triage APIs.", optionalNotes: "Compare dedupe keys and merge behavior.", tags: ["appsec", "triage"] },
+      { category: "Core AppSec", capability: "Vulnerability Prioritization", opsmx: "Supported", checkmarx: "Supported", businessValue: "Focus remediation on issues with meaningful risk.", technicalNotes: "OpsMx references exploitability, severity, and KEV signals; Checkmarx documents risk and AI insights APIs.", optionalNotes: "Validate prioritization inputs and override controls.", tags: ["appsec", "risk"] },
+      { category: "Core AppSec", capability: "Exploitability Context", opsmx: "Supported", checkmarx: "Supported", businessValue: "Distinguish theoretical findings from exploitable risk.", technicalNotes: "Both approaches can use exploitability-related context, with different implementation models.", optionalNotes: "Confirm language and package coverage.", tags: ["appsec", "risk"] },
+      { category: "Core AppSec", capability: "License Risk Management", opsmx: "Supported", checkmarx: "Supported", businessValue: "Manage legal and compliance risk from open-source packages.", technicalNotes: "SBOM and SCA workflows support license visibility.", optionalNotes: "Policy thresholds should align to legal guidance.", tags: ["appsec", "supply"] },
+      { category: "Core AppSec", capability: "Scan Result Export", opsmx: "Supported", checkmarx: "Supported", businessValue: "Share findings with stakeholders and downstream systems.", technicalNotes: "Both platforms provide reporting or export mechanisms.", optionalNotes: "Validate JSON, CSV, PDF, CycloneDX, and SPDX needs.", tags: ["appsec", "reporting"] },
+
+      { category: "Supply Chain", capability: "SBOM Generation", opsmx: "Native", checkmarx: "Supported", businessValue: "Inventory software components and dependencies.", technicalNotes: "OpsMx documents SBOM pages; Checkmarx documents SBOM export and SBOM scanning.", optionalNotes: "Preserved and expanded from source matrix.", tags: ["supply", "bom"] },
+      { category: "Supply Chain", capability: "SBOM Scanning", opsmx: "Supported", checkmarx: "Supported", businessValue: "Assess third-party risk from provided SBOMs.", technicalNotes: "Checkmarx documents SBOM file analysis; OpsMx uses SBOM and vulnerability data in delivery posture.", optionalNotes: "Validate CycloneDX and SPDX version needs.", tags: ["supply", "bom"] },
+      { category: "Supply Chain", capability: "DBOM", opsmx: "Native", checkmarx: "Not Available", businessValue: "Track what actually reached an environment.", technicalNotes: "OpsMx documents DBOM as delivery evidence. Equivalent deployment bill capability was not found in reviewed Checkmarx sources.", optionalNotes: "This is a core OpsMx deployment governance differentiator.", tags: ["supply", "governance"] },
+      { category: "Supply Chain", capability: "CBOM", opsmx: "Native", checkmarx: "Not Available", businessValue: "Track cryptographic posture and related evidence.", technicalNotes: "Source matrix identifies OpsMx CBOM. Equivalent capability was not found in reviewed Checkmarx sources.", optionalNotes: "Validate detailed cryptography inventory requirements.", tags: ["supply", "bom"] },
+      { category: "Supply Chain", capability: "Artifact Integrity Verification", opsmx: "Native", checkmarx: "Partial", businessValue: "Confirm deployed artifact identity against trusted build outputs.", technicalNotes: "OpsMx deployment firewall policies can evaluate artifact integrity. Checkmarx can scan artifacts but deployment-time integrity gating was not public in reviewed sources.", optionalNotes: "Use hash and registry evidence in policy design.", tags: ["supply", "artifact"] },
+      { category: "Supply Chain", capability: "Registry Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Connect artifact metadata and security posture to release decisions.", technicalNotes: "OpsMx documents ACR, ECR, GCR, Quay, Docker, and Artifactory paths; Checkmarx supports container and SCA workflows.", optionalNotes: "Confirm target registry APIs.", tags: ["supply", "registry"] },
+      { category: "Supply Chain", capability: "Generated Artifact Inventory", opsmx: "Native", checkmarx: "Partial", businessValue: "Track artifacts produced by delivery systems.", technicalNotes: "OpsMx documents generated artifacts; Checkmarx focuses on scan projects and results.", optionalNotes: "Use for release traceability.", tags: ["supply", "artifact"] },
+      { category: "Supply Chain", capability: "Deployed Artifact Inventory", opsmx: "Native", checkmarx: "Not Available", businessValue: "Know exactly which artifact is active in each environment.", technicalNotes: "OpsMx documents deployed artifacts and active deployment views. Equivalent production deployment inventory was not found in reviewed Checkmarx sources.", optionalNotes: "Critical for regulated change evidence.", tags: ["supply", "runtime"] },
+      { category: "Supply Chain", capability: "Package Risk Intelligence", opsmx: "Supported", checkmarx: "Supported", businessValue: "Prioritize dependency risk using package-level intelligence.", technicalNotes: "Checkmarx documents package risk endpoints; OpsMx can incorporate package risk in posture and policy.", optionalNotes: "Validate malware, CVE, license, and upgrade data sources.", tags: ["supply", "sca"] },
+      { category: "Supply Chain", capability: "End-of-Life Dependency Risk", opsmx: "Supported", checkmarx: "Supported", businessValue: "Identify unsupported components before they create operational exposure.", technicalNotes: "OpsMx SBOM details include EOL risk; Checkmarx SCA reports dependency risk.", optionalNotes: "Confirm language ecosystem support.", tags: ["supply", "sca"] },
+      { category: "Supply Chain", capability: "Private Registry Configuration", opsmx: "Supported", checkmarx: "Supported", businessValue: "Analyze proprietary packages and private artifacts.", technicalNotes: "Both enterprise environments require private repository connectivity.", optionalNotes: "Validate network and credential models.", tags: ["supply", "registry"] },
+      { category: "Supply Chain", capability: "Artifact Lineage", opsmx: "Native", checkmarx: "Partial", businessValue: "Connect source, build, scan, artifact, approval, and deployment evidence.", technicalNotes: "OpsMx DBOM and delivery context support lineage. Checkmarx documents scan and project APIs but not full deployment lineage in reviewed sources.", optionalNotes: "Use for audit and incident response.", tags: ["supply", "traceability"] },
+      { category: "Supply Chain", capability: "Version History", opsmx: "Native", checkmarx: "Supported", businessValue: "Review change history across application versions.", technicalNotes: "OpsMx documents version history; Checkmarx project and scan history should be validated against release versioning needs.", optionalNotes: "Align version identifiers across tools.", tags: ["supply", "traceability"] },
+      { category: "Supply Chain", capability: "Smart Diff Between Environments", opsmx: "Native", checkmarx: "Not Available", businessValue: "Compare risk between environment versions before promotion.", technicalNotes: "OpsMx documents Smart Diff for environment comparison. Equivalent deployment environment diff was not found in reviewed Checkmarx sources.", optionalNotes: "Useful for production readiness reviews.", tags: ["supply", "governance"] },
+      { category: "Supply Chain", capability: "Release Evidence Attestation", opsmx: "Native", checkmarx: "Partial", businessValue: "Provide evidence that release controls were followed.", technicalNotes: "OpsMx DBOM captures delivery actions and materials. Checkmarx reports scan evidence but deployment attestation was not found in reviewed sources.", optionalNotes: "Map to internal audit requirements.", tags: ["supply", "compliance"] },
+
+      { category: "Deployment Governance", capability: "Deployment Firewall", opsmx: "Native", checkmarx: "Not Available", businessValue: "Prevent non-compliant releases from reaching protected environments.", technicalNotes: "OpsMx documents deployment firewall enforcement at deployment time. Equivalent deployment firewall was not found in reviewed Checkmarx sources.", optionalNotes: "Preserved from source matrix.", tags: ["governance", "policy"] },
+      { category: "Deployment Governance", capability: "Allow and Block Deployment Outcomes", opsmx: "Native", checkmarx: "Not Available", businessValue: "Create an auditable release decision for each deployment.", technicalNotes: "OpsMx documents allowed and blocked deployment views.", optionalNotes: "Use for production gate reporting.", tags: ["governance", "audit"] },
+      { category: "Deployment Governance", capability: "Deployment Risk Status", opsmx: "Native", checkmarx: "Partial", businessValue: "Classify release risk while deployment is evaluated.", technicalNotes: "OpsMx documents scanning, high, medium, and low deployment risk states. Checkmarx provides findings risk but not deployment status in reviewed sources.", optionalNotes: "Map to internal severity models.", tags: ["governance", "risk"] },
+      { category: "Deployment Governance", capability: "Environment-Aware Policy", opsmx: "Native", checkmarx: "Partial", businessValue: "Apply stricter controls for staging and production.", technicalNotes: "OpsMx deployment firewall applies across environments. Checkmarx policies are findings-oriented in reviewed sources.", optionalNotes: "Validate environment taxonomy.", tags: ["governance", "policy"] },
+      { category: "Deployment Governance", capability: "Mandatory Code Scan Policy", opsmx: "Native", checkmarx: "Supported", businessValue: "Require code scanning before promotion.", technicalNotes: "OpsMx policies can mandate scanning; Checkmarx provides scan orchestration and policy capabilities.", optionalNotes: "Define blocking threshold by branch and environment.", tags: ["governance", "appsec"] },
+      { category: "Deployment Governance", capability: "No Critical CVE Policy", opsmx: "Native", checkmarx: "Supported", businessValue: "Block releases with unacceptable critical vulnerability exposure.", technicalNotes: "OpsMx deployment firewall policies include critical CVE examples; Checkmarx can report critical vulnerability findings.", optionalNotes: "Policy should account for exceptions and exploitability.", tags: ["governance", "cve"] },
+      { category: "Deployment Governance", capability: "Change Request Validation", opsmx: "Native", checkmarx: "Partial", businessValue: "Require approved change control before release.", technicalNotes: "OpsMx policy examples include approved change request tickets. Checkmarx ServiceNow integration is vulnerability-focused in reviewed sources.", optionalNotes: "Integrate with ITSM approval states.", tags: ["governance", "approval"] },
+      { category: "Deployment Governance", capability: "Security Review Validation", opsmx: "Native", checkmarx: "Partial", businessValue: "Confirm required security review before production.", technicalNotes: "OpsMx deployment policies can require review evidence.", optionalNotes: "Use for high-risk application tiers.", tags: ["governance", "approval"] },
+      { category: "Deployment Governance", capability: "Manual Approval Before Deployment", opsmx: "Native", checkmarx: "Partial", businessValue: "Allow accountable owners to review release evidence.", technicalNotes: "OpsMx ISD documentation includes manual approval stages; Checkmarx supports triage workflows but deployment approval was not found as a native control in reviewed sources.", optionalNotes: "Approval should be auditable.", tags: ["governance", "approval"] },
+      { category: "Deployment Governance", capability: "Automated Approvals", opsmx: "Native", checkmarx: "Not Available", businessValue: "Reduce delay where release evidence satisfies policy.", technicalNotes: "OpsMx Delivery Shield overview references automated approvals.", optionalNotes: "Use cautiously for regulated environments.", tags: ["governance", "approval"] },
+      { category: "Deployment Governance", capability: "Policy-Based Promotion Control", opsmx: "Native", checkmarx: "Partial", businessValue: "Control movement between dev, staging, and production.", technicalNotes: "OpsMx applies controls during deployment. Checkmarx policies support security findings but not full promotion control in reviewed sources.", optionalNotes: "Model by service criticality.", tags: ["governance", "promotion"] },
+      { category: "Deployment Governance", capability: "Exception Workflow", opsmx: "Native", checkmarx: "Supported", businessValue: "Permit governed risk acceptance with traceability.", technicalNotes: "OpsMx documents active exceptions and exception audit; Checkmarx supports triage, muting, and snoozing workflows.", optionalNotes: "Require expiry and justification.", tags: ["governance", "exception"] },
+      { category: "Deployment Governance", capability: "Deployment Audit Trail", opsmx: "Native", checkmarx: "Partial", businessValue: "Reconstruct release decisions after incidents or audits.", technicalNotes: "OpsMx tracks deployment history and DBOM. Checkmarx audit APIs focus on platform events and finding updates.", optionalNotes: "Align event retention requirements.", tags: ["governance", "audit"] },
+      { category: "Deployment Governance", capability: "Cluster Admission Enforcement", opsmx: "Native", checkmarx: "Not Available", businessValue: "Block policy-violating workloads at Kubernetes admission.", technicalNotes: "OpsMx release notes describe Kubernetes admission control for deployment firewall.", optionalNotes: "Validate cluster and namespace coverage.", tags: ["governance", "kubernetes"] },
+      { category: "Deployment Governance", capability: "Override Tracking", opsmx: "Native", checkmarx: "Partial", businessValue: "Record when authorized users override a deployment block.", technicalNotes: "OpsMx deployment firewall views include active or overridden status.", optionalNotes: "Require role control and audit review.", tags: ["governance", "audit"] },
+
+      { category: "Platform", capability: "Bring Your Own Scanner", opsmx: "Native", checkmarx: "Partial", businessValue: "Preserve existing scanner investments.", technicalNotes: "OpsMx documents integrations with multiple scanners. Checkmarx primarily provides platform-native scanning plus integrations.", optionalNotes: "Preserved from source matrix.", tags: ["platform", "byos"] },
+      { category: "Platform", capability: "Unified Risk Dashboard", opsmx: "Native", checkmarx: "Supported", businessValue: "Provide security and engineering leaders with centralized posture.", technicalNotes: "Both platforms provide dashboarding, with OpsMx emphasizing delivery and deployment posture.", optionalNotes: "Validate executive, team, and service views.", tags: ["platform", "dashboard"] },
+      { category: "Platform", capability: "Multi-Scanner Correlation", opsmx: "Native", checkmarx: "Partial", businessValue: "Reduce tool silos and repeated triage.", technicalNotes: "OpsMx correlates across scanner inputs. Checkmarx unifies supported scanner engines within Checkmarx One.", optionalNotes: "Preserved from source matrix.", tags: ["platform", "correlation"] },
+      { category: "Platform", capability: "Organization Security Posture", opsmx: "Native", checkmarx: "Supported", businessValue: "Roll up application risk for leadership review.", technicalNotes: "OpsMx documents organization security posture; Checkmarx provides application and project security views.", optionalNotes: "Compare hierarchy and portfolio support.", tags: ["platform", "posture"] },
+      { category: "Platform", capability: "Application Security Posture", opsmx: "Native", checkmarx: "Supported", businessValue: "Understand risk by application and service.", technicalNotes: "Both platforms support application-level views.", optionalNotes: "Validate service-level granularity.", tags: ["platform", "posture"] },
+      { category: "Platform", capability: "Application Status View", opsmx: "Native", checkmarx: "Partial", businessValue: "Connect current runtime service status with security risk.", technicalNotes: "OpsMx documents application status pages for running services. Checkmarx focuses on scan and project posture in reviewed sources.", optionalNotes: "Useful during release reviews.", tags: ["platform", "runtime"] },
+      { category: "Platform", capability: "Global Risk Management", opsmx: "Native", checkmarx: "Supported", businessValue: "Prioritize risk across many applications.", technicalNotes: "OpsMx documentation includes global risk management; Checkmarx risk APIs provide aggregated findings.", optionalNotes: "Validate sorting, ownership, and export.", tags: ["platform", "risk"] },
+      { category: "Platform", capability: "Smart Search", opsmx: "Native", checkmarx: "Supported", businessValue: "Find vulnerabilities, images, artifacts, and services quickly.", technicalNotes: "OpsMx release notes include Smart Search; Checkmarx provides advanced search and APIs.", optionalNotes: "Confirm searchable fields.", tags: ["platform", "search"] },
+      { category: "Platform", capability: "Service Catalog Context", opsmx: "Native", checkmarx: "Partial", businessValue: "Tie risk and deployments to owned services.", technicalNotes: "OpsMx application and service models support delivery context. Checkmarx project/application modeling may require mapping.", optionalNotes: "Validate owner and team metadata.", tags: ["platform", "service"] },
+      { category: "Platform", capability: "Multi-Tenant Enterprise Operation", opsmx: "Supported", checkmarx: "Supported", businessValue: "Support large organizations with delegated administration.", technicalNotes: "Both platforms are enterprise-oriented and require validation against tenant, group, and RBAC needs.", optionalNotes: "Confirm identity-provider integration.", tags: ["platform", "enterprise"] },
+      { category: "Platform", capability: "Self-Hosted Deployment", opsmx: "Supported", checkmarx: "Supported", businessValue: "Meet data residency and controlled network requirements.", technicalNotes: "OpsMx documents self-hosted API whitelisting; Checkmarx supports cloud and single-tenant models depending on packaging.", optionalNotes: "Validate deployment architecture.", tags: ["platform", "deployment"] },
+      { category: "Platform", capability: "API Access", opsmx: "Supported", checkmarx: "Supported", businessValue: "Automate onboarding, reporting, and integrations.", technicalNotes: "Both platforms expose APIs for enterprise workflows.", optionalNotes: "Validate authentication and rate limits.", tags: ["platform", "api"] },
+      { category: "Platform", capability: "Bulk Onboarding", opsmx: "Supported", checkmarx: "Supported", businessValue: "Scale setup across many applications and repositories.", technicalNotes: "OpsMx release notes reference bulk onboarding; Checkmarx APIs support project and repository operations.", optionalNotes: "Validate import templates.", tags: ["platform", "onboarding"] },
+      { category: "Platform", capability: "Role-Based Views", opsmx: "Supported", checkmarx: "Supported", businessValue: "Provide relevant views for AppSec, engineering, and executives.", technicalNotes: "Both platforms support enterprise access and role concepts.", optionalNotes: "Review least privilege requirements.", tags: ["platform", "identity"] },
+      { category: "Platform", capability: "Report Downloads", opsmx: "Supported", checkmarx: "Supported", businessValue: "Package evidence for RFP, audit, and leadership workflows.", technicalNotes: "Both platforms support report and data export mechanisms.", optionalNotes: "Check PDF formatting and raw data export.", tags: ["platform", "reporting"] },
+
+      { category: "AI", capability: "AI-Assisted Code Fix", opsmx: "Supported", checkmarx: "Supported", businessValue: "Accelerate remediation while preserving review control.", technicalNotes: "Both platforms reference AI-assisted remediation capabilities.", optionalNotes: "Preserved from source matrix.", tags: ["ai", "remediation"] },
+      { category: "AI", capability: "Automatic Pull Request Creation", opsmx: "Native", checkmarx: "Partial", businessValue: "Reduce manual remediation effort through governed PR workflow.", technicalNotes: "Source matrix identifies OpsMx native PR creation. Checkmarx remediation workflow should be validated for PR automation needs.", optionalNotes: "Preserved from source matrix.", tags: ["ai", "developer"] },
+      { category: "AI", capability: "AI Generated Code Validation", opsmx: "Native", checkmarx: "Supported", businessValue: "Validate AI-generated code against security policy.", technicalNotes: "Checkmarx documents AI Security packaging and AI supply chain updates; OpsMx source matrix identifies AI-generated code validation.", optionalNotes: "Rewritten from source wording for enterprise tone.", tags: ["ai", "appsec"] },
+      { category: "AI", capability: "AI Model Security", opsmx: "Native", checkmarx: "Supported", businessValue: "Assess model artifacts and AI supply chain risk.", technicalNotes: "Checkmarx documents AI Security and AI-BOM reporting updates. OpsMx source matrix identifies AI model scanning.", optionalNotes: "Validate model formats and repositories.", tags: ["ai", "model"] },
+      { category: "AI", capability: "AI-BOM Reporting", opsmx: "Partial", checkmarx: "Supported", businessValue: "Capture inventory and risk data for AI components.", technicalNotes: "Checkmarx API changelog references AI-BOM scan reports. OpsMx model and artifact evidence should be validated.", optionalNotes: "Use current vendor documentation for final scope.", tags: ["ai", "bom"] },
+      { category: "AI", capability: "AI-Powered Remediation API", opsmx: "Supported", checkmarx: "Supported", businessValue: "Automate remediation assistance through platform APIs.", technicalNotes: "Checkmarx API changelog documents AI remediation endpoints; OpsMx supports AI remediation workflows.", optionalNotes: "Validate approval before applying changes.", tags: ["ai", "api"] },
+      { category: "AI", capability: "AI Triage", opsmx: "Supported", checkmarx: "Supported", businessValue: "Summarize and prioritize findings for security teams.", technicalNotes: "Checkmarx API changelog documents AI triage endpoints; OpsMx documentation lists AI-powered issue assistance.", optionalNotes: "Human review remains required for risk acceptance.", tags: ["ai", "triage"] },
+      { category: "AI", capability: "Natural Language Rule Assistance", opsmx: "Native", checkmarx: "Partial", businessValue: "Help teams create policies from business intent.", technicalNotes: "OpsMx release notes reference Rules Genie. Equivalent policy rule generation was not found in reviewed Checkmarx sources.", optionalNotes: "Review generated rules before enforcement.", tags: ["ai", "policy"] },
+      { category: "AI", capability: "Security Issue Explanation", opsmx: "Native", checkmarx: "Supported", businessValue: "Help engineers understand findings and remediation options.", technicalNotes: "OpsMx release notes reference Alerts Genie; Checkmarx documents AI-assisted remediation and triage.", optionalNotes: "Validate language and framework coverage.", tags: ["ai", "developer"] },
+      { category: "AI", capability: "MCP Server for AI Assistants", opsmx: "Partial", checkmarx: "Supported", businessValue: "Operate security workflows through IDE and AI assistant interfaces.", technicalNotes: "Checkmarx release notes document a native MCP Server. OpsMx support was not found in reviewed sources.", optionalNotes: "Validate authentication and RBAC implications.", tags: ["ai", "developer"] },
+
+      { category: "Compliance", capability: "Compliance Automation", opsmx: "Native", checkmarx: "Supported", businessValue: "Continuously evaluate controls against compliance requirements.", technicalNotes: "OpsMx documents compliance automation; Checkmarx supports policy and reporting workflows.", optionalNotes: "Framework mapping should be verified.", tags: ["compliance", "policy"] },
+      { category: "Compliance", capability: "NIST 800-53 Policy Pack", opsmx: "Native", checkmarx: "Partial", businessValue: "Support federal and regulated control mapping.", technicalNotes: "OpsMx documentation lists NIST 800-53 compliance automation. Checkmarx support should be validated through policy/reporting configuration.", optionalNotes: "Confirm exact controls in scope.", tags: ["compliance", "nist"] },
+      { category: "Compliance", capability: "FedRAMP Policy Pack", opsmx: "Native", checkmarx: "Partial", businessValue: "Support federal cloud authorization evidence.", technicalNotes: "OpsMx documentation lists FedRAMP compliance automation.", optionalNotes: "Validate tenant and deployment requirements.", tags: ["compliance", "fedramp"] },
+      { category: "Compliance", capability: "PCI DSS Alignment", opsmx: "Native", checkmarx: "Partial", businessValue: "Support payment environment software delivery controls.", technicalNotes: "OpsMx overview references PCI DSS compliance packs. Checkmarx reporting can support evidence but mapping should be validated.", optionalNotes: "Tie controls to release evidence.", tags: ["compliance", "pci"] },
+      { category: "Compliance", capability: "HIPAA Alignment", opsmx: "Native", checkmarx: "Partial", businessValue: "Support healthcare delivery control evidence.", technicalNotes: "OpsMx overview references HIPAA compliance packs. Checkmarx support should be validated for required control mappings.", optionalNotes: "Confirm privacy and access controls.", tags: ["compliance", "hipaa"] },
+      { category: "Compliance", capability: "OWASP Top 10 CI/CD Security Risks", opsmx: "Native", checkmarx: "Partial", businessValue: "Evaluate delivery pipeline control weaknesses.", technicalNotes: "OpsMx documentation lists OWASP Top 10 CI/CD Security Risks. Checkmarx addresses many AppSec risks but CI/CD control mapping was not found as a documented pack.", optionalNotes: "Useful for platform engineering reviews.", tags: ["compliance", "cicd"] },
+      { category: "Compliance", capability: "CIS Kubernetes Benchmark", opsmx: "Native", checkmarx: "Partial", businessValue: "Support cluster configuration compliance.", technicalNotes: "OpsMx documentation lists CIS Benchmark Kubernetes. Checkmarx Kubernetes runtime enforcement was not found in reviewed sources.", optionalNotes: "Validate scanner and cluster agent coverage.", tags: ["compliance", "kubernetes"] },
+      { category: "Compliance", capability: "NSA CISA Top 10", opsmx: "Native", checkmarx: "Partial", businessValue: "Align security checks with hardening guidance.", technicalNotes: "OpsMx documentation lists NSA CISA Top 10 compliance automation.", optionalNotes: "Map controls to operational owners.", tags: ["compliance", "policy"] },
+      { category: "Compliance", capability: "MITRE ATT&CK Mapping", opsmx: "Native", checkmarx: "Partial", businessValue: "Communicate risk in threat-informed terms.", technicalNotes: "OpsMx documentation lists MITRE ATT&CK. Checkmarx mapping should be validated with current product materials.", optionalNotes: "Use for executive reporting.", tags: ["compliance", "threat"] },
+      { category: "Compliance", capability: "Audit Event History", opsmx: "Native", checkmarx: "Supported", businessValue: "Support forensic review and control validation.", technicalNotes: "OpsMx documents audit views; Checkmarx API changelog includes audit event updates.", optionalNotes: "Validate retention and export.", tags: ["compliance", "audit"] },
+      { category: "Compliance", capability: "Evidence for Deployed Versions", opsmx: "Native", checkmarx: "Partial", businessValue: "Demonstrate control state for what is running now.", technicalNotes: "OpsMx DBOM and deployment history provide deployed evidence. Checkmarx reports scan results but deployment evidence was not found in reviewed sources.", optionalNotes: "Important for regulated release reviews.", tags: ["compliance", "dbom"] },
+      { category: "Compliance", capability: "Exception Audit", opsmx: "Native", checkmarx: "Supported", businessValue: "Track accepted risk and review expired exceptions.", technicalNotes: "OpsMx documents exceptions audit; Checkmarx supports muting, snoozing, and triage history for findings.", optionalNotes: "Require owner, reason, and expiry.", tags: ["compliance", "exception"] },
+
+      { category: "Identity", capability: "RBAC", opsmx: "Supported", checkmarx: "Supported", businessValue: "Restrict access by role and responsibility.", technicalNotes: "Both enterprise platforms support role-based access concepts.", optionalNotes: "Validate group and tenant mapping.", tags: ["identity", "access"] },
+      { category: "Identity", capability: "Team and Access Management", opsmx: "Native", checkmarx: "Supported", businessValue: "Delegate ownership across AppSec and engineering teams.", technicalNotes: "OpsMx documents teams and access; Checkmarx APIs include access management updates.", optionalNotes: "Review administrative separation.", tags: ["identity", "teams"] },
+      { category: "Identity", capability: "Group-Based Assignment", opsmx: "Supported", checkmarx: "Supported", businessValue: "Map platform access to enterprise groups.", technicalNotes: "Checkmarx API changelog references resource assignment for entities; OpsMx supports roles and groups.", optionalNotes: "Validate identity provider integration.", tags: ["identity", "groups"] },
+      { category: "Identity", capability: "OAuth API Authentication", opsmx: "Supported", checkmarx: "Supported", businessValue: "Secure API automation.", technicalNotes: "Checkmarx documents OAuth client and API auth flows. OpsMx API auth should be validated for deployment model.", optionalNotes: "Use service accounts with least privilege.", tags: ["identity", "api"] },
+      { category: "Identity", capability: "Pipeline-Level RBAC", opsmx: "Native", checkmarx: "Not Available", businessValue: "Control who can run or modify delivery pipelines.", technicalNotes: "OpsMx ISD documentation lists pipeline-level RBAC. Equivalent delivery pipeline RBAC was not found in Checkmarx sources.", optionalNotes: "Relevant when OpsMx manages CD workflows.", tags: ["identity", "pipeline"] },
+      { category: "Identity", capability: "Approval Authorization", opsmx: "Native", checkmarx: "Partial", businessValue: "Ensure only accountable owners approve risk acceptance.", technicalNotes: "OpsMx approval workflows tie identity to deployment. Checkmarx triage identity should be validated for deployment approvals.", optionalNotes: "Map to separation-of-duties policies.", tags: ["identity", "approval"] },
+      { category: "Identity", capability: "User Audit", opsmx: "Native", checkmarx: "Supported", businessValue: "Track user actions in the platform.", technicalNotes: "OpsMx documents user audit; Checkmarx documents audit event APIs.", optionalNotes: "Confirm export and retention.", tags: ["identity", "audit"] },
+
+      { category: "Developer Experience", capability: "Pull Request Remediation", opsmx: "Native", checkmarx: "Supported", businessValue: "Move remediation into developer workflows.", technicalNotes: "OpsMx source matrix references PR creation; Checkmarx supports remediation guidance and developer workflows.", optionalNotes: "Validate SCM-specific behavior.", tags: ["developer", "remediation"] },
+      { category: "Developer Experience", capability: "IDE Workflow Support", opsmx: "Partial", checkmarx: "Supported", businessValue: "Reduce context switching during secure development.", technicalNotes: "Checkmarx documents MCP and assistant workflows for IDE contexts. OpsMx IDE-specific support was not found in reviewed sources.", optionalNotes: "Assess target IDEs.", tags: ["developer", "ide"] },
+      { category: "Developer Experience", capability: "Finding Explanation", opsmx: "Supported", checkmarx: "Supported", businessValue: "Help developers understand cause and remediation.", technicalNotes: "Both platforms provide remediation-oriented information.", optionalNotes: "Validate quality by language.", tags: ["developer", "education"] },
+      { category: "Developer Experience", capability: "One-Click Fix Workflow", opsmx: "Supported", checkmarx: "Supported", businessValue: "Reduce manual remediation effort.", technicalNotes: "Source matrix references one-click fix; Checkmarx documents AI remediation workflows.", optionalNotes: "Require review before merge.", tags: ["developer", "remediation"] },
+      { category: "Developer Experience", capability: "Branch-Aware Scanning", opsmx: "Supported", checkmarx: "Supported", businessValue: "Assess active development branches with relevant context.", technicalNotes: "OpsMx release notes reference branch scanning enhancements; Checkmarx supports repository project import and protected branch features.", optionalNotes: "Validate monorepo behavior.", tags: ["developer", "git"] },
+      { category: "Developer Experience", capability: "Protected Branch Awareness", opsmx: "Supported", checkmarx: "Supported", businessValue: "Apply stronger controls to protected branches.", technicalNotes: "Checkmarx API changelog references protected branches in AI supply chain service; OpsMx policies can evaluate branch protection.", optionalNotes: "Tie to promotion policy.", tags: ["developer", "git"] },
+      { category: "Developer Experience", capability: "Security Training Integration", opsmx: "Partial", checkmarx: "Supported", businessValue: "Improve developer security knowledge where training is required.", technicalNotes: "Checkmarx lists Codebashing in platform packaging. Equivalent native training was not found in OpsMx sources.", optionalNotes: "Evaluate training content separately.", tags: ["developer", "training"] },
+      { category: "Developer Experience", capability: "Developer Self-Service Scans", opsmx: "Supported", checkmarx: "Supported", businessValue: "Allow teams to scan without central security bottlenecks.", technicalNotes: "Both platforms support scan initiation workflows or APIs.", optionalNotes: "Confirm permissions and quotas.", tags: ["developer", "scan"] },
+
+      { category: "Integrations", capability: "GitHub Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Connect repository and PR evidence.", technicalNotes: "OpsMx documents GitHub integration; Checkmarx supports code repository integrations.", optionalNotes: "Validate GitHub Enterprise requirements.", tags: ["integration", "git"] },
+      { category: "Integrations", capability: "GitLab Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Connect GitLab projects and CI evidence.", technicalNotes: "OpsMx documents GitLab integration; Checkmarx supports repository integrations.", optionalNotes: "Validate self-managed GitLab support.", tags: ["integration", "git"] },
+      { category: "Integrations", capability: "Bitbucket Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Support Atlassian repository workflows.", technicalNotes: "OpsMx documents Bitbucket integration; Checkmarx supports SCM integrations.", optionalNotes: "Validate Bitbucket Cloud and Server.", tags: ["integration", "git"] },
+      { category: "Integrations", capability: "Jenkins Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Bring CI build evidence into security posture.", technicalNotes: "OpsMx documents Jenkins integration; Checkmarx supports CI/CD scanning workflows.", optionalNotes: "Validate plugin and API options.", tags: ["integration", "ci"] },
+      { category: "Integrations", capability: "Argo CD Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Apply delivery governance in GitOps CD workflows.", technicalNotes: "OpsMx documents ArgoCD integration. Checkmarx Argo CD deployment governance was not found in reviewed sources.", optionalNotes: "Core for Kubernetes GitOps programs.", tags: ["integration", "gitops"] },
+      { category: "Integrations", capability: "Spinnaker Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Support enterprise CD governance in Spinnaker estates.", technicalNotes: "OpsMx has ISD and Spinnaker documentation. Checkmarx Spinnaker governance was not found in reviewed sources.", optionalNotes: "Validate existing pipeline topology.", tags: ["integration", "cd"] },
+      { category: "Integrations", capability: "Jira Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Track remediation and release decisions through issue workflows.", technicalNotes: "OpsMx documents Jira integration; Checkmarx supports vulnerability integrations and workflow exports.", optionalNotes: "Map fields and ownership.", tags: ["integration", "ticketing"] },
+      { category: "Integrations", capability: "ServiceNow Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Connect vulnerability and change workflows with enterprise ITSM.", technicalNotes: "OpsMx ISD documents ServiceNow stages; Checkmarx documents ServiceNow Vulnerability Response integration.", optionalNotes: "Validate change request states.", tags: ["integration", "itsm"] },
+      { category: "Integrations", capability: "Slack Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Notify teams of security and deployment events.", technicalNotes: "OpsMx release notes reference Slack alert sharing. Checkmarx notification support should be validated for desired events.", optionalNotes: "Keep alerts actionable.", tags: ["integration", "notification"] },
+      { category: "Integrations", capability: "SonarQube Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Reuse existing SAST and code-quality evidence.", technicalNotes: "OpsMx documents SonarQube integration. Checkmarx typically replaces rather than aggregates SonarQube in reviewed materials.", optionalNotes: "BYOS evaluation item.", tags: ["integration", "scanner"] },
+      { category: "Integrations", capability: "Semgrep Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Ingest lightweight SAST findings from existing workflows.", technicalNotes: "OpsMx documents Semgrep integration.", optionalNotes: "Validate SARIF or native report handling.", tags: ["integration", "scanner"] },
+      { category: "Integrations", capability: "Trivy Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Ingest container and dependency scanner findings.", technicalNotes: "OpsMx documents Trivy integration.", optionalNotes: "Common BYOS scanner.", tags: ["integration", "scanner"] },
+      { category: "Integrations", capability: "ZAP Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Use dynamic scan evidence in release policy.", technicalNotes: "OpsMx documents ZAP integration; Checkmarx DAST is based on dynamic testing workflows.", optionalNotes: "Validate authentication and environment setup.", tags: ["integration", "dast"] },
+      { category: "Integrations", capability: "JFrog Xray Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Reuse artifact and dependency findings from JFrog.", technicalNotes: "OpsMx documents JFrog Xray integration.", optionalNotes: "BYOS integration value.", tags: ["integration", "scanner"] },
+      { category: "Integrations", capability: "Snyk Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Aggregate third-party scanner evidence.", technicalNotes: "OpsMx documents Snyk integration.", optionalNotes: "Useful where Snyk already exists.", tags: ["integration", "scanner"] },
+      { category: "Integrations", capability: "AWS Integration", opsmx: "Native", checkmarx: "Supported", businessValue: "Connect cloud context to delivery risk.", technicalNotes: "OpsMx documents AWS and cloud posture integrations; Checkmarx Cloud Insights supports cloud-related posture.", optionalNotes: "Validate account and region coverage.", tags: ["integration", "cloud"] },
+
+      { category: "Kubernetes", capability: "Kubernetes Cluster Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Connect cluster state with application delivery posture.", technicalNotes: "OpsMx documents Kubernetes cluster integration. Checkmarx container security should be validated for cluster-state requirements.", optionalNotes: "Essential for runtime-aware policy.", tags: ["kubernetes", "runtime"] },
+      { category: "Kubernetes", capability: "Kube Detector", opsmx: "Native", checkmarx: "Not Available", businessValue: "Detect cluster-level vulnerabilities and posture issues.", technicalNotes: "OpsMx architecture documentation references Kube Detector.", optionalNotes: "Validate deployment topology.", tags: ["kubernetes", "scan"] },
+      { category: "Kubernetes", capability: "Kubescape Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Assess Kubernetes security configuration.", technicalNotes: "OpsMx documents Kubescape service and integration.", optionalNotes: "Map results to policy.", tags: ["kubernetes", "compliance"] },
+      { category: "Kubernetes", capability: "OPA Enforcement", opsmx: "Native", checkmarx: "Not Available", businessValue: "Evaluate deployment rules close to the cluster.", technicalNotes: "OpsMx architecture references Deployment Firewall and OPA.", optionalNotes: "Review rule lifecycle and fail-closed behavior.", tags: ["kubernetes", "policy"] },
+      { category: "Kubernetes", capability: "Namespace-Aware Deployment Context", opsmx: "Native", checkmarx: "Not Available", businessValue: "Apply policies based on cluster and namespace.", technicalNotes: "OpsMx deployment records include cluster and deployment context.", optionalNotes: "Useful for shared clusters.", tags: ["kubernetes", "runtime"] },
+      { category: "Kubernetes", capability: "Active Deployment View", opsmx: "Native", checkmarx: "Not Available", businessValue: "Show what is currently running in Kubernetes.", technicalNotes: "OpsMx documents active deployment views. Equivalent runtime deployment inventory was not found in Checkmarx sources.", optionalNotes: "Use during incident response.", tags: ["kubernetes", "runtime"] },
+      { category: "Kubernetes", capability: "Deployment History View", opsmx: "Native", checkmarx: "Partial", businessValue: "Review deployment history and risk outcomes.", technicalNotes: "OpsMx documents deployment history. Checkmarx scan history exists but deployment history was not found in reviewed sources.", optionalNotes: "Connect to DBOM evidence.", tags: ["kubernetes", "audit"] },
+      { category: "Kubernetes", capability: "Admission Controller Blocking", opsmx: "Native", checkmarx: "Not Available", businessValue: "Prevent non-compliant Kubernetes workloads at admission.", technicalNotes: "OpsMx deployment firewall can be installed in target clusters for enforcement.", optionalNotes: "Validate rollback and override flow.", tags: ["kubernetes", "governance"] },
+
+      { category: "GitOps", capability: "GitOps-Based Installation", opsmx: "Native", checkmarx: "Partial", businessValue: "Deploy platform components through Git-managed operations.", technicalNotes: "OpsMx documentation includes GitOps installation paths.", optionalNotes: "Validate Helm and repo strategy.", tags: ["gitops", "ops"] },
+      { category: "GitOps", capability: "Git-Based Manifest Deployment", opsmx: "Native", checkmarx: "Not Available", businessValue: "Connect manifest changes to deployment outcomes.", technicalNotes: "OpsMx ISD documentation includes Kubernetes manifest deployment from Git.", optionalNotes: "Relevant when OpsMx manages CD pipelines.", tags: ["gitops", "kubernetes"] },
+      { category: "GitOps", capability: "Pipeline Promotion", opsmx: "Native", checkmarx: "Not Available", businessValue: "Promote releases through governed pipeline stages.", technicalNotes: "OpsMx ISD documentation lists pipeline promotion.", optionalNotes: "Not an AppSec scanner function.", tags: ["gitops", "governance"] },
+      { category: "GitOps", capability: "Manifest Policy Evaluation", opsmx: "Native", checkmarx: "Partial", businessValue: "Evaluate deployment manifests against delivery rules.", technicalNotes: "OpsMx policies can govern deployment stages. Checkmarx IaC can scan manifests but deployment policy enforcement was not found in reviewed sources.", optionalNotes: "Separate static manifest risk from release gating.", tags: ["gitops", "policy"] },
+      { category: "GitOps", capability: "CD Tool Connection", opsmx: "Native", checkmarx: "Partial", businessValue: "Bring deployment events into governance workflows.", technicalNotes: "OpsMx documents CI and CD tool integrations. Checkmarx is primarily AppSec-centered in reviewed sources.", optionalNotes: "Validate Argo CD and Spinnaker needs.", tags: ["gitops", "cd"] },
+      { category: "GitOps", capability: "Release Promotion Evidence", opsmx: "Native", checkmarx: "Partial", businessValue: "Record evidence for each environment transition.", technicalNotes: "OpsMx DBOM and delivery history provide promotion evidence.", optionalNotes: "Useful for controlled production releases.", tags: ["gitops", "audit"] },
+
+      { category: "Observability", capability: "OpenTelemetry Collector Integration", opsmx: "Native", checkmarx: "Partial", businessValue: "Use telemetry signals in delivery and runtime posture.", technicalNotes: "OpsMx architecture references OTEL Collector. Checkmarx telemetry integration was not found in reviewed AppSec docs.", optionalNotes: "Validate metrics and traces needed.", tags: ["observability", "runtime"] },
+      { category: "Observability", capability: "Observability Plugin", opsmx: "Native", checkmarx: "Partial", businessValue: "Correlate release events with operational signals.", technicalNotes: "OpsMx ISD documentation lists observability capabilities.", optionalNotes: "Useful for progressive delivery.", tags: ["observability", "cd"] },
+      { category: "Observability", capability: "Continuous Verification", opsmx: "Native", checkmarx: "Not Available", businessValue: "Verify deployment health using metrics and logs.", technicalNotes: "OpsMx ISD documentation includes continuous verification. Checkmarx equivalent deployment verification was not found in reviewed sources.", optionalNotes: "Applies beyond AppSec scanning.", tags: ["observability", "runtime"] },
+      { category: "Observability", capability: "Log Analysis", opsmx: "Native", checkmarx: "Not Available", businessValue: "Use log behavior to support deployment confidence.", technicalNotes: "OpsMx documents log analysis in continuous verification.", optionalNotes: "Integrate with existing logging stack.", tags: ["observability", "logs"] },
+      { category: "Observability", capability: "Metric Analysis", opsmx: "Native", checkmarx: "Not Available", businessValue: "Use service metrics for automated release verification.", technicalNotes: "OpsMx documents metric analysis in continuous verification.", optionalNotes: "Define service-level thresholds.", tags: ["observability", "metrics"] },
+      { category: "Observability", capability: "Deployment Insights", opsmx: "Native", checkmarx: "Not Available", businessValue: "Measure deployment performance and risk outcomes.", technicalNotes: "OpsMx ISD documentation lists deployment insights.", optionalNotes: "Useful for platform engineering.", tags: ["observability", "insights"] },
+      { category: "Observability", capability: "Pipeline Insights", opsmx: "Native", checkmarx: "Partial", businessValue: "Understand delivery bottlenecks and control outcomes.", technicalNotes: "OpsMx documents pipeline insights. Checkmarx CI scan data may support security workflow metrics but not full pipeline insights in reviewed sources.", optionalNotes: "Report separately from vulnerability metrics.", tags: ["observability", "pipeline"] },
+
+      { category: "Policy", capability: "Policy as Code", opsmx: "Native", checkmarx: "Partial", businessValue: "Apply consistent, auditable governance rules.", technicalNotes: "OpsMx supports delivery-context policy. Checkmarx documents policy violation APIs for findings.", optionalNotes: "Preserved from source matrix.", tags: ["policy", "governance"] },
+      { category: "Policy", capability: "Custom Policy Source", opsmx: "Native", checkmarx: "Partial", businessValue: "Let enterprises define controls aligned to internal standards.", technicalNotes: "OpsMx documents custom policy source integration.", optionalNotes: "Validate authoring and review flow.", tags: ["policy", "custom"] },
+      { category: "Policy", capability: "Global Policies", opsmx: "Native", checkmarx: "Supported", businessValue: "Apply common rules across teams and applications.", technicalNotes: "OpsMx documents global policies; Checkmarx policy APIs support retrieving violations.", optionalNotes: "Map exceptions by application tier.", tags: ["policy", "global"] },
+      { category: "Policy", capability: "Rule Severity Customization", opsmx: "Native", checkmarx: "Supported", businessValue: "Tune control severity to enterprise risk appetite.", technicalNotes: "OpsMx feature overview describes customizable rule severity and action.", optionalNotes: "Document governance board ownership.", tags: ["policy", "severity"] },
+      { category: "Policy", capability: "Rule Action Customization", opsmx: "Native", checkmarx: "Partial", businessValue: "Select alert, block, or exception behavior by rule.", technicalNotes: "OpsMx policies can alter actions including alerts or blocking deployment.", optionalNotes: "Use stricter actions for production.", tags: ["policy", "actions"] },
+      { category: "Policy", capability: "Policy Violation API", opsmx: "Supported", checkmarx: "Supported", businessValue: "Integrate violation details into reporting and automation.", technicalNotes: "Checkmarx API changelog documents policy violation endpoints; OpsMx supports policy evaluation data.", optionalNotes: "Validate field completeness.", tags: ["policy", "api"] },
+      { category: "Policy", capability: "Branch Protection Policy", opsmx: "Native", checkmarx: "Supported", businessValue: "Prevent risky repository configurations from feeding production.", technicalNotes: "OpsMx deployment firewall policy examples include branch protection. Checkmarx supports repository posture and protected branch concepts.", optionalNotes: "Define protected branch requirements.", tags: ["policy", "git"] },
+      { category: "Policy", capability: "Minimum Workflow Token Permissions", opsmx: "Native", checkmarx: "Partial", businessValue: "Reduce CI/CD credential abuse risk.", technicalNotes: "OpsMx deployment firewall policy examples include workflow token permission control.", optionalNotes: "Validate CI provider support.", tags: ["policy", "cicd"] },
+      { category: "Policy", capability: "Cloud Artifact Match Policy", opsmx: "Native", checkmarx: "Not Available", businessValue: "Detect unauthorized runtime artifacts.", technicalNotes: "OpsMx deployment firewall policy examples include cloud artifact hash matching.", optionalNotes: "Requires reliable registry and cloud inventory.", tags: ["policy", "artifact"] },
+      { category: "Policy", capability: "Latest Image Policy", opsmx: "Native", checkmarx: "Partial", businessValue: "Reduce exposure from stale runtime images.", technicalNotes: "OpsMx policy examples include using latest image for cloud services.", optionalNotes: "Balance with deterministic release policies.", tags: ["policy", "container"] },
+
+      { category: "Runtime", capability: "Runtime Testing Context", opsmx: "Supported", checkmarx: "Supported", businessValue: "Use running application results in release confidence.", technicalNotes: "DAST and runtime scan evidence can feed both programs.", optionalNotes: "Validate authenticated scan setup.", tags: ["runtime", "dast"] },
+      { category: "Runtime", capability: "Active Vulnerability View", opsmx: "Native", checkmarx: "Supported", businessValue: "Understand open risk on currently active services.", technicalNotes: "OpsMx documents open security issues and active deployments; Checkmarx provides current finding views.", optionalNotes: "Tie findings to deployed versions.", tags: ["runtime", "vulnerability"] },
+      { category: "Runtime", capability: "Cloud Security Posture", opsmx: "Supported", checkmarx: "Supported", businessValue: "Assess cloud control posture affecting application risk.", technicalNotes: "OpsMx documents cloud security views and ScoutSuite integration; Checkmarx lists Cloud Insights.", optionalNotes: "Validate cloud providers.", tags: ["runtime", "cloud"] },
+      { category: "Runtime", capability: "Runtime Exposure Context", opsmx: "Native", checkmarx: "Partial", businessValue: "Prioritize findings by exposure of the running service.", technicalNotes: "OpsMx combines deployment and runtime context. Checkmarx supports risk prioritization but deployment runtime exposure should be validated.", optionalNotes: "Important for internet-facing systems.", tags: ["runtime", "risk"] },
+      { category: "Runtime", capability: "Most Frequent Security Issues", opsmx: "Native", checkmarx: "Supported", businessValue: "Identify recurring control failures.", technicalNotes: "OpsMx deployment firewall page shows frequent security issues; Checkmarx dashboards and reports can show recurring findings.", optionalNotes: "Use for program improvement.", tags: ["runtime", "analytics"] },
+      { category: "Runtime", capability: "Production Readiness Gate", opsmx: "Native", checkmarx: "Partial", businessValue: "Convert risk posture into a production decision.", technicalNotes: "OpsMx deployment firewall evaluates whether deployment should proceed. Checkmarx focuses on vulnerability and policy findings in reviewed sources.", optionalNotes: "Core positioning message.", tags: ["runtime", "governance"] },
+      { category: "Runtime", capability: "Post-Deployment Traceability", opsmx: "Native", checkmarx: "Partial", businessValue: "Trace from production state back to source and controls.", technicalNotes: "OpsMx DBOM supports deployed evidence. Checkmarx scan traceability should be mapped externally to deployment data.", optionalNotes: "Supports incident response.", tags: ["runtime", "traceability"] },
+      { category: "Runtime", capability: "Deployment Status Analytics", opsmx: "Native", checkmarx: "Not Available", businessValue: "Measure allowed, blocked, scanning, and overridden deployment states.", technicalNotes: "OpsMx deployment firewall views include these operational states. Equivalent deployment status analytics was not found in Checkmarx sources.", optionalNotes: "Useful for CISO dashboards.", tags: ["runtime", "analytics"] }
+    ];
+
+    const categoryOrder = ["Core AppSec", "Supply Chain", "Deployment Governance", "Platform", "AI", "Compliance", "Identity", "Developer Experience", "Integrations", "Kubernetes", "GitOps", "Observability", "Policy", "Runtime"];
+    const collapsedCategories = new Set();
+    let activeFilter = "all";
+    let searchTerm = "";
+
+    const statusClass = {
+      "Native": "native",
+      "Supported": "supported",
+      "Integrated": "integrated",
+      "Partial": "partial",
+      "Not Available": "none"
+    };
+
+    const statusIcon = {
+      "Native": '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l7 4v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V7l7-4Z" stroke="currentColor" stroke-width="2"/><path d="m9 12 2 2 4-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      "Supported": '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      "Integrated": '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 12h8M7 7h.01M17 17h.01M7 17h.01M17 7h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M7 7 17 17M17 7 7 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+      "Partial": '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 7v6l4 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="2"/></svg>',
+      "Not Available": '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
+    };
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function badge(status) {
+      const cls = statusClass[status] || "none";
+      return `<span class="badge ${cls}" title="${escapeHtml(status)}">${statusIcon[status] || statusIcon["Not Available"]}${escapeHtml(status)}</span>`;
+    }
+
+    function rowMatches(row) {
+      const filter = filters.find(item => item.id === activeFilter);
+      const categoryMatch = !filter || !filter.categories.length || filter.categories.includes(row.category);
+      const haystack = Object.values(row).flat().join(" ").toLowerCase();
+      const searchMatch = !searchTerm || haystack.includes(searchTerm);
+      return categoryMatch && searchMatch;
+    }
+
+    function renderMatrix() {
+      const body = document.getElementById("matrixBody");
+      const visibleRows = matrixRows.filter(rowMatches);
+      const grouped = new Map();
+      for (const category of categoryOrder) {
+        const rows = visibleRows.filter(row => row.category === category);
+        if (rows.length) grouped.set(category, rows);
+      }
+
+      body.innerHTML = Array.from(grouped, ([category, rows]) => {
+        const collapsed = collapsedCategories.has(category);
+        const categoryId = `cat-${category.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")}`;
+        const rowMarkup = collapsed ? "" : rows.map(row => `
+          <tr class="capability-row">
+            <td>
+              <div class="capability-name">
+                <span>${escapeHtml(row.capability)}</span>
+                <span class="tagline">${escapeHtml(row.category)} / ${escapeHtml(row.tags.join(", "))}</span>
+              </div>
+            </td>
+            <td>${badge(row.opsmx)}</td>
+            <td>${badge(row.checkmarx)}</td>
+            <td>${escapeHtml(row.businessValue)}</td>
+            <td>${escapeHtml(row.technicalNotes)}</td>
+            <td class="note">${escapeHtml(row.optionalNotes || "")}</td>
+          </tr>
+        `).join("");
+
+        return `
+          <tr class="category-row">
+            <td colspan="6">
+              <button class="category-button" type="button" aria-expanded="${String(!collapsed)}" aria-controls="${categoryId}" data-category="${escapeHtml(category)}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                ${escapeHtml(category)} (${rows.length})
+              </button>
+            </td>
+          </tr>
+          ${rowMarkup}
+        `;
+      }).join("");
+
+      document.getElementById("resultCount").textContent = `${visibleRows.length} of ${matrixRows.length} capabilities shown`;
+
+      body.querySelectorAll(".category-button").forEach(button => {
+        button.addEventListener("click", () => {
+          const category = button.dataset.category;
+          if (collapsedCategories.has(category)) {
+            collapsedCategories.delete(category);
+          } else {
+            collapsedCategories.add(category);
+          }
+          renderMatrix();
+        });
+      });
+    }
+
+    function renderFilters() {
+      const filterRow = document.getElementById("filterRow");
+      filterRow.innerHTML = filters.map(filter => `
+        <button class="filter-btn ${filter.id === activeFilter ? "active" : ""}" type="button" data-filter="${filter.id}" aria-pressed="${String(filter.id === activeFilter)}">${escapeHtml(filter.label)}</button>
+      `).join("");
+
+      filterRow.querySelectorAll("button").forEach(button => {
+        button.addEventListener("click", () => {
+          activeFilter = button.dataset.filter;
+          renderFilters();
+          renderMatrix();
+        });
+      });
+    }
+
+    function renderStats() {
+      const countBy = (predicate) => matrixRows.filter(predicate).length;
+      const uniqueIntegrations = new Set(matrixRows.filter(row => row.category === "Integrations").map(row => row.capability));
+      const stats = [
+        ["Capabilities Compared", matrixRows.length],
+        ["OpsMx Native Differentiators", countBy(row => row.opsmx === "Native")],
+        ["Shared Supported Features", countBy(row => ["Supported", "Native", "Integrated"].includes(row.opsmx) && ["Supported", "Native", "Integrated"].includes(row.checkmarx))],
+        ["Deployment Governance Features", countBy(row => row.category === "Deployment Governance" || row.tags.includes("governance"))],
+        ["AI Capabilities", countBy(row => row.category === "AI")],
+        ["Integrations", uniqueIntegrations.size]
+      ];
+
+      document.getElementById("statsGrid").innerHTML = stats.map(([label, value]) => `
+        <div class="stat"><strong>${value}</strong><span>${escapeHtml(label)}</span></div>
+      `).join("");
+    }
+
+    function renderNavigation() {
+      const sections = Array.from(document.querySelectorAll("[data-nav]"));
+      const nav = document.getElementById("navList");
+      nav.innerHTML = sections.map(section => `
+        <li><a href="#${escapeHtml(section.id)}">${escapeHtml(section.dataset.nav)}</a></li>
+      `).join("");
+
+      const links = Array.from(nav.querySelectorAll("a"));
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter(entry => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        links.forEach(link => {
+          link.classList.toggle("active", link.getAttribute("href") === `#${visible.target.id}`);
+        });
+      }, { rootMargin: "-20% 0px -65% 0px", threshold: [0, .25, .5, .75] });
+
+      sections.forEach(section => observer.observe(section));
+    }
+
+    function bindSearch() {
+      const input = document.getElementById("matrixSearch");
+      input.addEventListener("input", () => {
+        searchTerm = input.value.trim().toLowerCase();
+        renderMatrix();
+      });
+    }
+
+    renderNavigation();
+    renderStats();
+    renderFilters();
+    renderMatrix();
+    bindSearch();
+  </script>
+</body>
+</html>

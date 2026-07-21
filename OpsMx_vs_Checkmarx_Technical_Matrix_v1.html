@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OpsMx vs Checkmarx - Technical Capability Matrix</title>
+  <style>
+    :root {
+      --bg: #f5f8fc;
+      --surface: #ffffff;
+      --surface-soft: #f0f5fb;
+      --text: #18283b;
+      --muted: #5d6c80;
+      --line: #d8e3ef;
+      --blue: #0b4f9c;
+      --blue-soft: #e7f0ff;
+      --green: #157f3f;
+      --green-soft: #e8f7ee;
+      --amber: #93610a;
+      --amber-soft: #fff3d7;
+      --slate: #475569;
+      --slate-soft: #eef2f7;
+      --shadow: 0 10px 30px rgba(20, 42, 72, .08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, #083d78, #0b5cad);
+      color: #fff;
+      padding: 48px 36px;
+    }
+
+    header .eyebrow {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity: .86;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 52px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    header p {
+      max-width: 860px;
+      margin: 16px 0 0;
+      color: rgba(255, 255, 255, .88);
+      font-size: 17px;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .94);
+      backdrop-filter: blur(10px);
+    }
+
+    nav strong {
+      margin-right: 4px;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid #c6d3e3;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+    }
+
+    input {
+      width: min(420px, 100%);
+    }
+
+    button {
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid #c6d3e3;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--blue);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--blue-soft);
+    }
+
+    main {
+      max-width: 1400px;
+      margin: auto;
+      padding: 34px 28px 48px;
+    }
+
+    h2 {
+      margin: 34px 0 14px;
+      font-size: 28px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    p {
+      color: var(--muted);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: var(--surface);
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .card p {
+      margin: 10px 0 0;
+    }
+
+    .card ul {
+      margin: 12px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .toolbar-note {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+      background: var(--surface);
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid #e4ebf4;
+      font-size: 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #0b4f9c;
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    tbody tr:not(.section):hover {
+      background: #f7fbff;
+    }
+
+    .section td {
+      background: var(--blue-soft);
+      color: #173b67;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 26px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .native {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .supported {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .partial {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .limited {
+      background: var(--slate-soft);
+      color: var(--slate);
+    }
+
+    .unavailable {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 720px) {
+      header,
+      main {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      nav {
+        padding: 12px 18px;
+      }
+
+      input,
+      select,
+      button {
+        width: 100%;
+      }
+
+      .toolbar-note {
+        width: 100%;
+        margin-left: 0;
+      }
+
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      nav {
+        display: none;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      header,
+      .card,
+      .table-wrap,
+      footer {
+        box-shadow: none;
+      }
+
+      th {
+        position: static;
+      }
+
+      table {
+        min-width: 0;
+      }
+    }
+  </style>
+  <script>
+    function filterTable() {
+      const query = document.getElementById('q').value.trim().toLowerCase();
+      const category = document.getElementById('category').value;
+      const rows = Array.from(document.querySelectorAll('#matrix tbody tr'));
+      const visibleBySection = {};
+      let currentSection = '';
+      let visibleRows = 0;
+
+      rows.forEach(row => {
+        if (row.classList.contains('section')) {
+          currentSection = row.dataset.category;
+          visibleBySection[currentSection] = false;
+          row.style.display = '';
+          return;
+        }
+
+        const matchesText = !query || row.innerText.toLowerCase().includes(query);
+        const matchesCategory = category === 'all' || row.dataset.category === category;
+        const visible = matchesText && matchesCategory;
+
+        row.style.display = visible ? '' : 'none';
+        if (visible) {
+          visibleRows += 1;
+          visibleBySection[row.dataset.category] = true;
+        }
+      });
+
+      rows.forEach(row => {
+        if (row.classList.contains('section')) {
+          row.style.display = visibleBySection[row.dataset.category] ? '' : 'none';
+        }
+      });
+
+      document.getElementById('count').textContent = visibleRows + ' capabilities shown';
+    }
+
+    function resetFilters() {
+      document.getElementById('q').value = '';
+      document.getElementById('category').value = 'all';
+      filterTable();
+    }
+
+    document.addEventListener('DOMContentLoaded', filterTable);
+  </script>
+</head>
+
+<body>
+  <header>
+    <p class="eyebrow">Enterprise Technical Capability Matrix</p>
+    <h1>OpsMx vs Checkmarx</h1>
+    <p>July 2026 comparison for security architects, platform engineering leaders, DevSecOps teams, and presales evaluators. Checkmarx is positioned respectfully as an AppSec platform; OpsMx is positioned around deployment governance and production promotion decisions.</p>
+  </header>
+
+  <nav aria-label="Capability matrix controls">
+    <strong>Filter capabilities</strong>
+    <input id="q" oninput="filterTable()" placeholder="Search capabilities, values, or notes..." aria-label="Search capabilities">
+    <select id="category" onchange="filterTable()" aria-label="Filter by category">
+      <option value="all">All categories</option>
+      <option value="core">Core Application Security</option>
+      <option value="governance">Deployment Governance</option>
+      <option value="platform">Platform</option>
+      <option value="ai">AI and Remediation</option>
+      <option value="bom">Bill of Materials</option>
+    </select>
+    <button type="button" onclick="resetFilters()">Reset</button>
+    <span class="toolbar-note" id="count" aria-live="polite"></span>
+  </nav>
+
+  <main>
+    <section class="cards" aria-label="Executive summary">
+      <div class="card">
+        <h3>Positioning</h3>
+        <p>Traditional AppSec answers which vulnerabilities exist. OpsMx extends the discussion to whether a release should be allowed to reach production.</p>
+      </div>
+      <div class="card">
+        <h3>Shared Capabilities</h3>
+        <p>Both platforms support important AppSec workflows, including static analysis, dependency visibility, dynamic testing, and secrets detection.</p>
+      </div>
+      <div class="card">
+        <h3>OpsMx Emphasis</h3>
+        <ul>
+          <li>Deployment Firewall and governance</li>
+          <li>DBOM and CBOM evidence</li>
+          <li>Bring Your Own Scanner aggregation</li>
+          <li>AI code and model validation workflows</li>
+        </ul>
+      </div>
+    </section>
+
+    <h2>Capability Matrix</h2>
+
+    <div class="table-wrap">
+      <table id="matrix">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>OpsMx</th>
+            <th>Checkmarx</th>
+            <th>Business Value</th>
+            <th>Technical Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section" data-category="core">
+            <td colspan="5">Core Application Security</td>
+          </tr>
+          <tr data-category="core">
+            <td>SAST</td>
+            <td><span class="badge supported">Supported</span></td>
+            <td><span class="badge supported">Supported</span></td>
+            <td>Identify source-code vulnerabilities before release.</td>
+            <td>Both platforms support enterprise static analysis workflows.</td>
+          </tr>
+          <tr data-category="core">
+            <td>SCA</td>
+            <td><span class="badge supported">Supported</span></td>
+            <td><span class="badge supported">Supported</span></td>
+            <td>Expose open-source dependency and license risk.</td>
+            <td>Both platforms support software composition analysis and SBOM-related workflows.</td>
+          </tr>
+          <tr data-category="core">
+            <td>DAST</td>
+            <td><span class="badge supported">Supported</span></td>
+            <td><span class="badge supported">Supported</span></td>
+            <td>Test running applications and APIs for exploitable behavior.</td>
+            <td>Enterprise DAST workflows are available and should be validated against target application architecture.</td>
+          </tr>
+          <tr data-category="core">
+            <td>Secrets Detection</td>
+            <td><span class="badge supported">Supported</span></td>
+            <td><span class="badge supported">Supported</span></td>
+            <td>Reduce credential leakage in source, repositories, and delivery workflows.</td>
+            <td>Both approaches support secrets detection as part of secure development practices.</td>
+          </tr>
+
+          <tr class="section" data-category="governance">
+            <td colspan="5">Deployment Governance</td>
+          </tr>
+          <tr data-category="governance">
+            <td>Deployment Firewall</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge unavailable">Not documented</span></td>
+            <td>Prevent non-compliant releases from reaching protected environments.</td>
+            <td>OpsMx enforces application security at deployment time using delivery and security evidence.</td>
+          </tr>
+          <tr data-category="governance">
+            <td>Deployment BOM (DBOM)</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge unavailable">Not documented</span></td>
+            <td>Track what was deployed, where it was deployed, and how it was approved.</td>
+            <td>DBOM provides production deployment traceability beyond component inventory.</td>
+          </tr>
+          <tr data-category="governance">
+            <td>Policy as Code</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge partial">Partial</span></td>
+            <td>Apply consistent security and deployment rules across environments.</td>
+            <td>OpsMx policies can use deployment context to support allow, block, or exception decisions.</td>
+          </tr>
+
+          <tr class="section" data-category="platform">
+            <td colspan="5">Platform</td>
+          </tr>
+          <tr data-category="platform">
+            <td>Bring Your Own Scanner (BYOS)</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge limited">Platform-centric</span></td>
+            <td>Preserve existing scanner investments while centralizing governance.</td>
+            <td>OpsMx can aggregate findings from multiple scanner and delivery-tool integrations.</td>
+          </tr>
+          <tr data-category="platform">
+            <td>Unified Risk Dashboard</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge supported">Available</span></td>
+            <td>Provide centralized security visibility for application and platform teams.</td>
+            <td>Evaluation should compare portfolio, application, service, and deployment-level views.</td>
+          </tr>
+          <tr data-category="platform">
+            <td>Multi-scanner Correlation</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge partial">Partial</span></td>
+            <td>Reduce tool silos and repeated triage across scanner outputs.</td>
+            <td>OpsMx emphasizes correlation across third-party scanner findings and delivery evidence.</td>
+          </tr>
+
+          <tr class="section" data-category="ai">
+            <td colspan="5">AI and Remediation</td>
+          </tr>
+          <tr data-category="ai">
+            <td>AI-assisted Code Fix</td>
+            <td><span class="badge supported">Supported</span></td>
+            <td><span class="badge supported">Supported</span></td>
+            <td>Accelerate remediation while keeping developer review in the workflow.</td>
+            <td>AI-assisted suggestions should be validated through secure code review before merge.</td>
+          </tr>
+          <tr data-category="ai">
+            <td>Automatic Pull Request Creation</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge partial">Workflow dependent</span></td>
+            <td>Reduce manual remediation effort by moving fixes into governed PR workflows.</td>
+            <td>OpsMx positions PR generation as part of the remediation workflow; implementation details should be validated by SCM.</td>
+          </tr>
+          <tr data-category="ai">
+            <td>AI-generated Code Validation</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge partial">Partial</span></td>
+            <td>Validate AI-generated code against organizational security and deployment policies.</td>
+            <td>This reframes AI security as a release-readiness control rather than only a code-scanning task.</td>
+          </tr>
+          <tr data-category="ai">
+            <td>AI Model Security</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge unavailable">Not documented</span></td>
+            <td>Assess AI and ML model artifacts where they are part of the software delivery chain.</td>
+            <td>Validate supported model formats and repositories during technical evaluation.</td>
+          </tr>
+
+          <tr class="section" data-category="bom">
+            <td colspan="5">Bill of Materials</td>
+          </tr>
+          <tr data-category="bom">
+            <td>SBOM</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge supported">Supported</span></td>
+            <td>List software components, dependencies, licenses, and associated vulnerabilities.</td>
+            <td>SBOM answers what software exists in an application or artifact.</td>
+          </tr>
+          <tr data-category="bom">
+            <td>CBOM</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge unavailable">Not documented</span></td>
+            <td>Track cryptographic assets and related evidence where required by governance programs.</td>
+            <td>CBOM should be evaluated against the organization's cryptography inventory requirements.</td>
+          </tr>
+          <tr data-category="bom">
+            <td>DBOM</td>
+            <td><span class="badge native">Native</span></td>
+            <td><span class="badge unavailable">Not documented</span></td>
+            <td>Record the artifact, environment, approvals, and controls associated with deployment.</td>
+            <td>DBOM answers what actually reached production and how the deployment was governed.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      This concise v1 matrix is intended for quick technical conversations. For a comprehensive workshop-ready view, use OpsMx_vs_Checkmarx_Comparison_Enhanced.html. Capability statements should be validated against current vendor documentation and the customer's target architecture.
+    </footer>
+  </main>
+</body>
+
+</html>
