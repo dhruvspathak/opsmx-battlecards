@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>OpsMx vs Wiz — The Release Gap</title>
+  <style>
+    :root {
+      --bg: #F6F7F9;
+      --panel: #FFFFFF;
+      --ink: #0F1620;
+      --ink-soft: #4A5364;
+      --ink-faint: #8791A0;
+      --line: #E4E7EC;
+      --teal: #0B5C67;
+      --teal-deep: #083F47;
+      --teal-tint: #E6F2F2;
+      --indigo: #38399B;
+      --indigo-deep: #26275E;
+      --indigo-tint: #EBEBF8;
+      --coral: #E8622C;
+      --coral-deep: #C74F1F;
+      --good: #0F7A47;
+      --good-bg: #E5F5EC;
+      --no-fg: #94A3B4;
+      --no-bg: #F1F3F5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HERO */
+    .hero {
+      background: radial-gradient(1200px 500px at 15% -10%, #124B54 0%, var(--teal-deep) 55%, #071E22 100%);
+      color: #fff;
+      padding: 64px 0 54px;
+    }
+
+    .kicker {
+      font-size: 12.5px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #8FD3D6;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(30px, 4.4vw, 46px);
+      line-height: 1.12;
+      font-weight: 800;
+      margin: 0 0 18px;
+      letter-spacing: -0.01em;
+    }
+
+    h1 .soft {
+      color: #9FC8CC;
+      font-weight: 600;
+    }
+
+    .hero p.lede {
+      font-size: 17px;
+      color: #D3E6E8;
+      max-width: 620px;
+      margin: 0 0 30px;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-tags span {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #EAF6F6;
+    }
+
+    section {
+      padding: 52px 0;
+    }
+
+    section.tight {
+      padding: 36px 0;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0 0 8px;
+      letter-spacing: -0.01em;
+    }
+
+    p.section-lede {
+      color: var(--ink-soft);
+      font-size: 15px;
+      max-width: 640px;
+      margin: 0 0 28px;
+    }
+
+    /* LIFECYCLE DIAGRAM */
+    .diagram-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px 24px 20px;
+      box-shadow: 0 1px 3px rgba(15, 22, 32, 0.04);
+    }
+
+    .diagram-caption {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: var(--ink-faint);
+    }
+
+    .diagram-caption span.cap-block {
+      max-width: 420px;
+    }
+
+    .diagram-caption b {
+      color: var(--ink);
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      margin-right: 6px;
+      position: relative;
+      top: 1px;
+    }
+
+    /* 60 SECOND TAKE */
+    .take-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .take-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .take-card .tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .tag.wiz {
+      background: var(--indigo-tint);
+      color: var(--indigo);
+    }
+
+    .tag.opsmx {
+      background: var(--teal-tint);
+      color: var(--teal);
+    }
+
+    .tag.together {
+      background: #FDEEE5;
+      color: var(--coral-deep);
+    }
+
+    .take-card h3 {
+      font-size: 16px;
+      margin: 0 0 8px;
+    }
+
+    .take-card p {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+
+    /* DIFFERENTIATOR CARDS */
+    .diff-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .diff-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--teal);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+
+    .diff-card .num {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+      color: var(--teal);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .diff-card h3 {
+      font-size: 16.5px;
+      margin: 0 0 8px;
+    }
+
+    .diff-card p {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+
+    /* COMPARISON TABLE */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .comp-table th {
+      text-align: left;
+      font-size: 11.5px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      padding: 12px 16px;
+      background: var(--panel);
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .comp-table th.center,
+    .comp-table td.center {
+      text-align: center;
+    }
+
+    .comp-table td {
+      padding: 13px 16px;
+      font-size: 13.5px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    .comp-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comp-table td.cap {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .comp-table td.why {
+      color: var(--ink-soft);
+      font-size: 12.5px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 74px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .pill.yes {
+      background: var(--good-bg);
+      color: var(--good);
+    }
+
+    .pill.partial {
+      background: #FBF1DD;
+      color: #946200;
+    }
+
+    .pill.no {
+      background: var(--no-bg);
+      color: var(--no-fg);
+    }
+
+    /* HONEST SECTION */
+    .honest {
+      background: var(--indigo-tint);
+      border: 1px solid #D6D6EF;
+      border-radius: 14px;
+      padding: 24px 26px;
+    }
+
+    .honest h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: var(--indigo);
+    }
+
+    .honest p {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: var(--ink-soft);
+    }
+
+    .honest p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* NOTE / ASIDE */
+    .aside {
+      background: #F4F5FB;
+      border: 1px dashed #C7C9E6;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      margin-top: 14px;
+    }
+
+    /* CTA */
+    .cta {
+      background: linear-gradient(120deg, var(--teal-deep), #0E4650);
+      border-radius: 18px;
+      padding: 38px 32px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .cta h2 {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .cta p {
+      color: #CDE6E8;
+      font-size: 14.5px;
+      max-width: 520px;
+      margin: 0 auto 22px;
+    }
+
+    .cta-note {
+      color: #D7ECEE;
+      font-size: 12.5px;
+      margin: 14px auto 0;
+      max-width: 620px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 16, 24, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 20;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(100%, 480px);
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 22px 60px rgba(9, 18, 27, 0.24);
+      padding: 24px;
+    }
+
+    .modal-card h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      color: var(--ink);
+    }
+
+    .modal-card p {
+      margin: 0 0 18px;
+      color: var(--ink-soft);
+      font-size: 13.5px;
+    }
+
+    .form-row {
+      margin-bottom: 12px;
+    }
+
+    .form-row label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      margin-bottom: 6px;
+    }
+
+    .form-row input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 14px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .form-row input:focus {
+      outline: 2px solid rgba(11, 92, 103, 0.16);
+      border-color: var(--teal);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .btn-ghost,
+    .btn-submit {
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 11px 18px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .btn-ghost {
+      background: #eef2f6;
+      color: var(--ink);
+    }
+
+    .btn-submit {
+      background: var(--coral);
+      color: #fff;
+    }
+
+    .form-status {
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: var(--teal);
+      min-height: 18px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 13.5px;
+      text-decoration: none;
+    }
+
+    .btn.primary {
+      background: var(--coral);
+      color: #fff;
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    footer {
+      padding: 30px 0 60px;
+    }
+
+    footer p {
+      font-size: 12px;
+      color: var(--ink-faint);
+      max-width: 680px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--teal);
+      background: var(--teal-tint);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width:760px) {
+      .take-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .diff-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .comp-table {
+        font-size: 12px;
+      }
+
+      .comp-table td.why {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">OpsMx vs Wiz</div>
+      <h2>Wiz finds the risk.</h2>
+      <h1><span class="soft">OpsMx governs the release.</span></h1>
+      <p class="lede">
+        Wiz's Security Graph is genuinely strong at showing what's exploitable across cloud, and increasingly
+        code. But Wiz was built as a cloud detection and posture platform first. Its pipeline gates are recent,
+        largely Kubernetes-scoped, and stop at should this "build" fail.
+      </p>
+      <h3><strong>OpsMx is the control plane that decides whether a release actually ships.</strong></h3>
+      <div class="hero-tags">
+        <span>2-minute read</span>
+        <span>Detailed technical matrix available on request</span>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <!-- LIFECYCLE DIAGRAM -->
+    <section class="tight">
+      <h2>OpsMx governs the one moment Wiz's graph doesn't own</h2>
+      <p class="section-lede">
+        Wiz sees your code lightly and your cloud deeply. OpsMx sits in between, correlating both, plus every
+        other scanner in your stack, into a single policy gate before anything reaches production.
+      </p>
+      <div class="diagram-card">
+        <svg viewbox="0 0 880 195" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- Base timeline -->
+          <line stroke="#DDE2E8" stroke-width="3" x1="60" x2="820" y1="120" y2="120"></line>
+          <!-- OpsMx (full lifecycle) -->
+          <path d="M 60 55 Q 60 40 75 40 L 805 40 Q 820 40 820 55" fill="none" stroke="#0B5C67" stroke-width="4"></path>
+          <text fill="#0B5C67" font-family="-apple-system,Segoe UI,sans-serif" font-size="14" font-weight="700"
+            text-anchor="middle" x="440" y="24">
+            OPSMX — End-to-End Software Delivery Governance
+          </text>
+          <!-- Wiz Code (light, left island) -->
+          <path d="M 60 85 Q 60 70 75 70 L 250 70 Q 265 70 265 85" fill="none" stroke="#38399B" stroke-width="3"
+            stroke-dasharray="6 4"></path>
+          <text fill="#38399B" font-family="-apple-system,Segoe UI,sans-serif" font-size="12" font-weight="700"
+            text-anchor="middle" x="162" y="102">
+            WIZ CODE — lightweight SAST/SCA/secrets
+          </text>
+          <!-- Gap indicator -->
+          <line x1="272" x2="643" y1="70" y2="70" stroke="#C7CDD6" stroke-width="2" stroke-dasharray="3 5"></line>
+          <text fill="#8791A0" font-family="-apple-system,Segoe UI,sans-serif" font-size="11" font-style="italic"
+            text-anchor="middle" x="457" y="62">
+            no release-time control point
+          </text>
+          <!-- Wiz Cloud/Defend (deep, right island) -->
+          <path d="M 650 85 Q 650 70 665 70 L 805 70 Q 820 70 820 85" fill="none" stroke="#38399B" stroke-width="3.5">
+          </path>
+          <text fill="#38399B" font-family="-apple-system,Segoe UI,sans-serif" font-size="12" font-weight="700"
+            text-anchor="middle" x="735" y="102">
+            WIZ CLOUD/DEFEND — deep agentless posture
+          </text>
+          <!-- Stage nodes -->
+          <g font-family="-apple-system,Segoe UI,sans-serif">
+            <circle cx="60" cy="120" fill="#0B5C67" r="9"></circle>
+            <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="60" y="150">Code</text>
+            <circle cx="265" cy="120" fill="#0B5C67" r="9"></circle>
+            <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="265" y="150">Build</text>
+            <circle cx="480" cy="120" fill="#0B5C67" r="10"></circle>
+            <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="480" y="150">Test</text>
+            <circle cx="650" cy="120" fill="#E8622C" r="13"></circle>
+            <text fill="#0F1620" font-size="13" font-weight="800" text-anchor="middle" x="650" y="150">Deploy</text>
+            <text fill="#C74F1F" font-size="10.5" font-weight="700" text-anchor="middle" x="650" y="165">
+              Deployment Firewall
+            </text>
+            <circle cx="820" cy="120" fill="#0B5C67" r="9"></circle>
+            <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="820"
+              y="150">Production</text>
+          </g>
+        </svg>
+        <div class="diagram-caption">
+          <span class="cap-block">
+            <span class="swatch" style="background:#38399B"></span>
+            <b>Wiz</b> — Lightweight code scanning on one end, deep agentless cloud and runtime posture on the
+            other. Admission control at deploy is Kubernetes-only.
+          </span>
+          <span class="cap-block">
+            <span class="swatch" style="background:#0B5C67"></span>
+            <b>OpsMx</b> — Continuous validation from code to production, with a policy-as-code release gate across
+            every deployment target.
+          </span>
+        </div>
+      </div>
+    </section>
+    <!-- 60 SECOND TAKE -->
+    <section class="tight">
+      <h2>The 60-second take</h2>
+      <div class="take-grid">
+        <div class="take-card">
+          <span class="tag wiz">Wiz</span>
+          <h3>Cloud-first CNAPP, code bolted on</h3>
+          <p>Agentless visibility into cloud posture, identities, and runtime — now extended with lightweight
+            native SAST/SCA/secrets scanning layered onto the same Security Graph.</p>
+        </div>
+        <div class="take-card">
+          <span class="tag opsmx">OpsMx</span>
+          <h3>Deployment governance, born in the pipeline</h3>
+          <p>Governs the SDLC from code to production with a release-time control point, correlating findings from
+            any engine — including Wiz's own — into one deployment decision.</p>
+        </div>
+        <div class="take-card">
+          <span class="tag together">The gap</span>
+          <h3>What Wiz alone can't answer</h3>
+          <p>"Is this specific release, right now, actually compliant and safe to ship?" Wiz's graph tells you
+            what's risky. It has no dedicated control plane that decides and proves whether a release is
+            authorized to go out.</p>
+        </div>
+      </div>
+    </section>
+    <!-- DIFFERENTIATORS -->
+    <section>
+      <h2>Four things Wiz's architecture wasn't built to do</h2>
+      <p class="section-lede">Not because Wiz is weak its cloud security graph is excellent at what it does.
+        Release governance simply isn't the category it was built for.</p>
+      <div class="diff-grid">
+        <div class="diff-card">
+          <div class="num">01</div>
+          <h3>Correlate every engine you already run</h3>
+          <p>Already running Wiz, Semgrep, Trivy, or another scanner for code review? OpsMx unifies SAST, SCA,
+            container, and secrets findings from all of them including Wiz's own into one deployment risk
+            decision. No forced migration onto a single vendor's engines.</p>
+        </div>
+        <div class="diff-card">
+          <div class="num">02</div>
+          <h3>A release gate that isn't Kubernetes-only</h3>
+          <p>Wiz's Admission Controller blocks risky Kubernetes deployments. OpsMx's Deployment Firewall governs
+            every release target Kubernetes, VMs, serverless, on-prem with the same policy-as-code gate, every
+            time.</p>
+        </div>
+        <div class="diff-card">
+          <div class="num">03</div>
+          <h3>Exploitability with a decision attached</h3>
+          <p>Wiz's Security Graph is genuinely strong at showing what's exploitable across code and cloud. OpsMx
+            takes that same kind of signal plus KEV, EPSS, and business context one step further into an
+            automated ship/no-ship decision, backed by a DBOM that proves what actually shipped, where, and when.</p>
+        </div>
+        <div class="diff-card">
+          <div class="num">04</div>
+          <h3>Compliance that enforces itself — independent of any one cloud</h3>
+          <p>NIST 800-53, PCI DSS, and HIPAA policy packs are enforced automatically before release, not audited
+            after the fact. And since Wiz became part of Google Cloud in March 2026, it's a fair question for
+            procurement: OpsMx's governance layer isn't tied to any single hyperscaler's roadmap or pricing.</p>
+        </div>
+      </div>
+    </section>
+    <!-- SNAPSHOT TABLE -->
+    <section>
+      <h2>Comparison Matrix</h2>
+      <p class="section-lede">A concise enterprise capability comparison across the major evaluation categories.
+        Detailed technical matrices are available during technical validation and proof-of-concept engagements.</p>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th class="center">Wiz</th>
+            <th class="center">OpsMx</th>
+            <th class="why">Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Core Application Security (Code Review)</td>
+          </tr>
+          <tr>
+            <td class="cap">SAST</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Detect vulnerabilities in source code before release.</td>
+          </tr>
+          <tr>
+            <td class="cap">SCA</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Manage open-source dependency risk.</td>
+          </tr>
+          <tr>
+            <td class="cap">Container Security</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Protect containerized workloads and images.</td>
+          </tr>
+          <tr>
+            <td class="cap">Secrets Detection</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Prevent credential exposure in code and configs.</td>
+          </tr>
+          <tr>
+            <td class="cap">DAST</td>
+            <td class="center"><span class="pill no">Not Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Validate running applications from the outside; Wiz requires a third-party tool here.</td>
+          </tr>
+          <tr>
+            <td class="cap">API Security</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Secure the modern API attack surface.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Automations &amp; Integrations</td>
+          </tr>
+          <tr>
+            <td class="cap">CI/CD Integrations</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Embed security checks into every pipeline run.</td>
+          </tr>
+          <tr>
+            <td class="cap">SCM / VCS Integration</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Scan and gate at the source control layer.</td>
+          </tr>
+          <tr>
+            <td class="cap">IDE Plugins</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Give developers feedback where they write code — a gap for both vendors.</td>
+          </tr>
+          <tr>
+            <td class="cap">CLI</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Support local and scripted workflows.</td>
+          </tr>
+          <tr>
+            <td class="cap">Ticketing (Jira, ServiceNow)</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Route findings into existing remediation workflows.</td>
+          </tr>
+          <tr>
+            <td class="cap">REST APIs / Webhooks</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Automate governance across the wider toolchain.</td>
+          </tr>
+          <tr>
+            <td class="cap">Bring Your Own Scanner</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Preserve existing scanner investments instead of forcing migration.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Exploitability, Reachability &amp; Deployment
+              Governance</td>
+          </tr>
+          <tr>
+            <td class="cap">Code-to-Cloud Correlation</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Link a code finding to where it actually runs.</td>
+          </tr>
+          <tr>
+            <td class="cap">Reachability Analysis</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Cut noise by confirming a vulnerability is actually invoked — a genuine Wiz strength.</td>
+          </tr>
+          <tr>
+            <td class="cap">Exploit Intelligence (KEV/EPSS)</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Prioritize by real-world exploitation likelihood.</td>
+          </tr>
+          <tr>
+            <td class="cap">Multi-scanner Risk Correlation</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Unify findings from every engine into one risk view, not just Wiz's own.</td>
+          </tr>
+          <tr>
+            <td class="cap">Deployment Firewall</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Enforce policy at the moment of deployment, on every target — Wiz's gate is Kubernetes-only.
+            </td>
+          </tr>
+          <tr>
+            <td class="cap">Release Readiness / Approval Workflows</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Govern production readiness with auditable sign-off.</td>
+          </tr>
+          <tr>
+            <td class="cap">Deployment Verification</td>
+            <td class="center"><span class="pill no">Not Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Confirm what was deployed matches what was approved.</td>
+          </tr>
+          <tr>
+            <td class="cap">DBOM (Delivery Bill of Materials)</td>
+            <td class="center"><span class="pill no">Not Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Prove what actually shipped, where, and when.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Regulatory Compliance Coverage</td>
+          </tr>
+          <tr>
+            <td class="cap">HIPAA</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Protect and evidence controls over health data.</td>
+          </tr>
+          <tr>
+            <td class="cap">FedRAMP</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Wiz for Government's hosted platform holds FedRAMP High authorization; OpsMx enforces the
+              same control families as automated release gates in your pipeline.</td>
+          </tr>
+          <tr>
+            <td class="cap">PCI DSS</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Protect cardholder data across the SDLC.</td>
+          </tr>
+          <tr>
+            <td class="cap">SOC 2 Type II</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Demonstrate operational security controls.</td>
+          </tr>
+          <tr>
+            <td class="cap">NIST 800-53</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Meet federal-grade control baselines.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">AI Security</td>
+          </tr>
+          <tr>
+            <td class="cap">AI Code Validation</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Assess AI-generated code before it merges.</td>
+          </tr>
+          <tr>
+            <td class="cap">AI Security Posture (AI-SPM)</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Discover and govern AI services and models in the cloud — a Wiz strength.</td>
+          </tr>
+          <tr>
+            <td class="cap">AI Guided Remediation</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Reduce prompt-injection and related risks.</td>
+          </tr>
+          <tr>
+            <td class="cap">LLM Supply Chain - Model Scanning</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Track AI model and dataset dependencies.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Cloud Native Security</td>
+          </tr>
+          <tr>
+            <td class="cap">Cloud Security Posture (CSPM)</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Assess misconfigurations across cloud accounts — Wiz's home turf, not OpsMx's category.</td>
+          </tr>
+          <tr>
+            <td class="cap">Kubernetes Security</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Protect Kubernetes clusters and workloads.</td>
+          </tr>
+          <tr>
+            <td class="cap">GitOps Security</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Govern GitOps-style deployments.</td>
+          </tr>
+          <tr>
+            <td class="cap">IaC Security (Terraform, etc.)</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Secure infrastructure as code before it's applied.</td>
+          </tr>
+          <tr>
+            <td class="cap">Runtime Image Validation</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Validate running images against approved builds.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Software Supply Chain Security</td>
+          </tr>
+          <tr>
+            <td class="cap">SBOM</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Inventory software components.</td>
+          </tr>
+          <tr>
+            <td class="cap">CBOM</td>
+            <td class="center"><span class="pill no">Not Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Track cryptographic assets for crypto-agility and PQC readiness.</td>
+          </tr>
+          <tr>
+            <td class="cap">QBOM</td>
+            <td class="center"><span class="pill no">Not Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Specialized inventory to catalogs cryptographic assets (algorithms,keys,certificates,etc)
+              through a quantum-risk lens.</td>
+          </tr>
+          <tr>
+            <td class="cap">Build Provenance</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Trace build integrity back to source.</td>
+          </tr>
+          <tr>
+            <td class="cap">Deployment Traceability</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Link artifacts to the specific deployments they landed in.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <!-- HONEST SECTION -->
+    <section class="tight">
+      <div class="honest">
+        <h3>Where Wiz wins — and why that's fine</h3>
+        <p>Wiz's cloud security graph is best-in-class — agentless CSPM, CIEM, and DSPM at a scale few platforms
+          match, and Wiz for Government holds a genuine FedRAMP High authorization for the platform itself. That's
+          not a talking point to argue around. Most enterprises we talk to already have Wiz, or are actively
+          evaluating it, for exactly that reason, and aren't looking to replace it.</p>
+        <p>The conversation that actually lands isn't "switch away from Wiz," it's "your cloud posture is covered —
+          is your release decision?" OpsMx is built to sit alongside exactly this kind of platform, correlating its
+          findings into the deployment-governance layer it doesn't provide, not competing with its cloud coverage.</p>
+      </div>
+    </section>
+    <!-- CTA -->
+    <section>
+      <div class="cta">
+        <h2>Find the gap in your own pipeline</h2>
+        <p>A 30-minute working session usually surfaces whether a customer's current stack has real release-time
+          governance or just assumes it does.</p>
+        <div class="cta-buttons">
+          <button class="btn primary" type="button" data-open-modal="book-demo">Book a technical walkthrough</button>
+          <button class="btn secondary" type="button" data-open-modal="matrix">Request the full capability matrix</button>
+        </div>
+        <p class="cta-note">Share a few quick details and the request will be sent to your inbox through a Vercel-backed endpoint using SMTP.</p>
+      </div>
+    </section>
+  </div>
+  <div class="modal-backdrop" id="demo-modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="demo-modal-title">
+      <h3 id="demo-modal-title">Request a quick callback</h3>
+      <p>Share your details and we’ll receive the request immediately.</p>
+      <form id="demo-form">
+        <div class="form-row">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" placeholder="Jane Doe" required />
+        </div>
+        <div class="form-row">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="jane@company.com" required />
+        </div>
+        <div class="form-row">
+          <label for="company">Company</label>
+          <input id="company" name="company" type="text" placeholder="Your company" required />
+        </div>
+        <div class="form-row">
+          <label for="designation">Designation</label>
+          <input id="designation" name="designation" type="text" placeholder="Security Lead" required />
+        </div>
+        <div class="modal-actions">
+          <button class="btn-ghost" type="button" id="close-modal">Cancel</button>
+          <button class="btn-submit" type="submit">Submit</button>
+        </div>
+        <div class="form-status" id="form-status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+  <footer>
+    <div class="wrap">
+      <p>Prepared for pre-sales conversations. Capability comparisons reflect publicly documented information as of
+        2026 and should be validated against current vendor documentation during technical evaluation. OpsMx and
+        Wiz are trademarks of their respective owners.</p>
+    </div>
+  </footer>
+  <script>
+    (() => {
+      const modal = document.getElementById('demo-modal');
+      const closeButton = document.getElementById('close-modal');
+      const openButtons = document.querySelectorAll('[data-open-modal]');
+      const form = document.getElementById('demo-form');
+      const status = document.getElementById('form-status');
+      const intentInputs = {
+        'book-demo': 'Book a technical walkthrough',
+        'matrix': 'Request the full capability matrix'
+      };
+
+      function toggleModal(show) {
+        modal.classList.toggle('open', show);
+        modal.setAttribute('aria-hidden', String(!show));
+        if (show) {
+          document.getElementById('name').focus();
+        }
+      }
+
+      openButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const intent = button.getAttribute('data-open-modal');
+          form.dataset.intent = intent;
+          toggleModal(true);
+        });
+      });
+
+      closeButton.addEventListener('click', () => toggleModal(false));
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+          toggleModal(false);
+        }
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        status.textContent = 'Sending your request...';
+
+        const payload = {
+          intent: form.dataset.intent || 'book-demo',
+          subject: intentInputs[form.dataset.intent] || 'Book a demo',
+          name: document.getElementById('name').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          company: document.getElementById('company').value.trim(),
+          designation: document.getElementById('designation').value.trim()
+        };
+
+        try {
+          const response = await fetch('/api/book-demo', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data?.message || 'Unable to send request.');
+          }
+
+          status.textContent = 'Thanks — your request has been sent successfully.';
+          form.reset();
+          setTimeout(() => toggleModal(false), 1200);
+        } catch (error) {
+          status.textContent = error.message || 'Something went wrong. Please try again.';
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>
