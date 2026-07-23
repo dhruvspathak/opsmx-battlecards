@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>OpsMx vs Snyk — The Deployment Gap</title>
+  <style>
+    :root {
+      --bg: #F6F7F9;
+      --panel: #FFFFFF;
+      --ink: #0F1620;
+      --ink-soft: #4A5364;
+      --ink-faint: #8791A0;
+      --line: #E4E7EC;
+      --teal: #0B5C67;
+      --teal-deep: #083F47;
+      --teal-tint: #E6F2F2;
+      --plum: #5B4B8A;
+      --plum-tint: #EFECF7;
+      --coral: #E8622C;
+      --coral-deep: #C74F1F;
+      --good: #0F7A47;
+      --good-bg: #E5F5EC;
+      --no-fg: #94A3B4;
+      --no-bg: #F1F3F5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HERO */
+    .hero {
+      background: radial-gradient(1200px 500px at 15% -10%, #124B54 0%, var(--teal-deep) 55%, #071E22 100%);
+      color: #fff;
+      padding: 64px 0 54px;
+    }
+
+    .kicker {
+      font-size: 12.5px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #8FD3D6;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(30px, 4.4vw, 46px);
+      line-height: 1.12;
+      font-weight: 800;
+      margin: 0 0 18px;
+      letter-spacing: -0.01em;
+    }
+
+    h1 .soft {
+      color: #9FC8CC;
+      font-weight: 600;
+    }
+
+    .hero p.lede {
+      font-size: 17px;
+      color: #D3E6E8;
+      max-width: 600px;
+      margin: 0 0 30px;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-tags span {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #EAF6F6;
+    }
+
+    section {
+      padding: 52px 0;
+    }
+
+    section.tight {
+      padding: 36px 0;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0 0 8px;
+      letter-spacing: -0.01em;
+    }
+
+    p.section-lede {
+      color: var(--ink-soft);
+      font-size: 15px;
+      max-width: 640px;
+      margin: 0 0 28px;
+    }
+
+    /* LIFECYCLE DIAGRAM */
+    .diagram-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px 24px 20px;
+      box-shadow: 0 1px 3px rgba(15, 22, 32, 0.04);
+    }
+
+    .diagram-caption {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: var(--ink-faint);
+    }
+
+    .diagram-caption b {
+      color: var(--ink);
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      margin-right: 6px;
+      position: relative;
+      top: 1px;
+    }
+
+    /* 60 SECOND TAKE */
+    .take-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .take-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .take-card .tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .tag.snyk {
+      background: var(--plum-tint);
+      color: var(--plum);
+    }
+
+    .tag.opsmx {
+      background: var(--teal-tint);
+      color: var(--teal);
+    }
+
+    .tag.together {
+      background: #FDEEE5;
+      color: var(--coral-deep);
+    }
+
+    .take-card h3 {
+      font-size: 16px;
+      margin: 0 0 8px;
+    }
+
+    .take-card p {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+
+    /* DIFFERENTIATOR CARDS */
+    .diff-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .diff-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--teal);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+
+    .diff-card .num {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+      color: var(--teal);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .diff-card h3 {
+      font-size: 16.5px;
+      margin: 0 0 8px;
+    }
+
+    .diff-card p {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+
+    /* COMPARISON TABLE */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .comp-table th {
+      text-align: left;
+      font-size: 11.5px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      padding: 12px 16px;
+      background: var(--panel);
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .comp-table th.center,
+    .comp-table td.center {
+      text-align: center;
+    }
+
+    .comp-table td {
+      padding: 13px 16px;
+      font-size: 13.5px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    .comp-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comp-table td.cap {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .comp-table td.why {
+      color: var(--ink-soft);
+      font-size: 12.5px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 74px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .pill.yes {
+      background: var(--good-bg);
+      color: var(--good);
+    }
+
+    .pill.partial {
+      background: #FBF1DD;
+      color: #946200;
+    }
+
+    .pill.no {
+      background: var(--no-bg);
+      color: var(--no-fg);
+    }
+
+    /* HONEST SECTION */
+    .honest {
+      background: var(--plum-tint);
+      border: 1px solid #DCD3EF;
+      border-radius: 14px;
+      padding: 24px 26px;
+    }
+
+    .honest h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: var(--plum);
+    }
+
+    .honest p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--ink-soft);
+    }
+
+    /* CTA */
+    .cta {
+      background: linear-gradient(120deg, var(--teal-deep), #0E4650);
+      border-radius: 18px;
+      padding: 38px 32px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .cta h2 {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .cta p {
+      color: #CDE6E8;
+      font-size: 14.5px;
+      max-width: 520px;
+      margin: 0 auto 22px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 13.5px;
+      text-decoration: none;
+    }
+
+    .btn.primary {
+      background: var(--coral);
+      color: #fff;
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    footer {
+      padding: 30px 0 60px;
+    }
+
+    footer p {
+      font-size: 12px;
+      color: var(--ink-faint);
+      max-width: 680px;
+    }
+
+    @media (max-width:760px) {
+      .take-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .diff-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .comp-table {
+        font-size: 12px;
+      }
+
+      .comp-table td.why {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker">OpsMx vs Snyk</div>
+      <h2>Snyk secures the code.</h2>
+      <h1><span class="soft">OpsMx secures the release.</span></h1>
+      <p class="lede">
+        Snyk was built to catch vulnerabilities while developers write code. But nothing in its architecture stops a
+        "non-compliant" release from reaching production.
+      </p>
+      <h3><strong>That's the gap OpsMx closes.</strong></h3>
+      <div class="hero-tags">
+        <span>2-minute read</span>
+        <span>Detailed technical matrix available on request</span>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <!-- LIFECYCLE DIAGRAM -->
+    <section class="tight">
+      <h2>OpsMx covers everything Snyk does—and what comes next</h2>
+      <p class="section-lede">
+        Snyk focuses on identifying security issues during development. OpsMx provides continuous security validation
+        while extending governance through deployment and into production.
+      </p>
+      <div class="diagram-card">
+        <svg viewbox="0 0 880 190" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- Base timeline -->
+          <line stroke="#DDE2E8" stroke-width="3" x1="60" x2="820" y1="120" y2="120"></line>
+          <!-- OpsMx (full lifecycle) -->
+          <path d="M 60 55 Q 60 40 75 40 L 805 40 Q 820 40 820 55" fill="none" stroke="#0B5C67" stroke-width="4"></path>
+          <text fill="#0B5C67" font-family="-apple-system,Segoe UI,sans-serif" font-size="14" font-weight="700"
+            text-anchor="middle" x="440" y="24">
+            OPSMX — End-to-End Software Delivery Governance
+          </text>
+          <!-- Snyk (subset of OpsMx) -->
+          <path d="M 60 70 Q 60 55 75 55 L 465 55 Q 480 55 480 70" fill="none" stroke="#5B4B8A" stroke-width="3"></path>
+          <text fill="#5B4B8A" font-family="-apple-system,Segoe UI,sans-serif" font-size="13" font-weight="700"
+            text-anchor="middle" x="270" y="105">
+            SNYK — Security Scanning
+          </text>
+          <!-- Stage nodes -->
+          <g font-family="-apple-system,Segoe UI,sans-serif">
+            <circle cx="60" cy="120" fill="#0B5C67" r="9"></circle>
+            <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="60" y="150">Code</text>
+            <circle cx="265" cy="120" fill="#0B5C67" r="9"></circle>
+            <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="265" y="150">Build</text>
+            <circle cx="480" cy="120" fill="#0B5C67" r="10"></circle>
+            <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="480" y="150">Test</text>
+            <circle cx="650" cy="120" fill="#E8622C" r="13"></circle>
+            <text fill="#0F1620" font-size="13" font-weight="800" text-anchor="middle" x="650" y="150">Deploy</text>
+            <text fill="#C74F1F" font-size="10.5" font-weight="700" text-anchor="middle" x="650" y="165">
+              Deployment Firewall
+            </text>
+            <circle cx="820" cy="120" fill="#0B5C67" r="9"></circle>
+            <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="820"
+              y="150">Production</text>
+          </g>
+        </svg>
+        <div class="diagram-caption">
+          <span>
+            <span class="swatch" style="background:#5B4B8A"></span>
+            <b>Snyk</b> — Security scanning during code, pull requests, and CI.
+          </span>
+          <span>
+            <span class="swatch" style="background:#0B5C67"></span>
+            <b>OpsMx</b> — Covers the same security validation while extending governance through deployment and into
+            production.
+          </span>
+        </div>
+      </div>
+    </section>
+    <!-- 60 SECOND TAKE -->
+    <section class="tight">
+      <h2>The 60-second take</h2>
+      <div class="take-grid">
+        <div class="take-card">
+          <span class="tag snyk">Snyk</span>
+          <h3>Developer-first AppSec</h3>
+          <p>Native appsec engines triggered via IDE and pull request. Out of the picture when the code merges.</p>
+        </div>
+        <div class="take-card">
+          <span class="tag opsmx">OpsMx</span>
+          <h3>Deployment governance</h3>
+          <p>Governs the SDLC from code to production. Extend controls till production by providing deploymnent gates,
+            context and DBOM.</p>
+        </div>
+        <div class="take-card">
+          <span class="tag together">The gap</span>
+          <h3>What Snyk alone can't answer</h3>
+          <p>"Is this specific release, right now, actually compliant and safe to ship?" Snyk has no visibility into the
+            deployment event itself — OpsMx does.</p>
+        </div>
+      </div>
+    </section>
+    <!-- DIFFERENTIATORS -->
+    <section>
+      <h2>Four things Snyk's architecture cannot do</h2>
+      <p class="section-lede">Not because Snyk is weak — because deployment governance isn't the category it's built
+        for.</p>
+      <div class="diff-grid">
+        <div class="diff-card">
+          <div class="num">01</div>
+          <h3>Deployment Firewall</h3>
+          <p>Don't stop at 'what is shipped'. Analyze 'where it is shipped'. Real-time, rule-based gate that blocks a
+            release at the moment of deployment — not just at code review.
+            Nothing passes into production without clearing it.</p>
+        </div>
+        <div class="diff-card">
+          <div class="num">02</div>
+          <h3>DBOM — proof of what shipped</h3>
+          <p>An SBOM tells you what's in the code. A Delivery Bill of Materials tells you what actually got deployed,
+            where, and how. Snyk can't answer that question — it isn't in the deployment path.</p>
+        </div>
+        <div class="diff-card">
+          <div class="num">03</div>
+          <h3>Compliance that enforces itself</h3>
+          <p>NIST 800-53, FedRAMP, PCI DSS, and HIPAA packs are enforced automatically before release — not audited
+            after the fact.</p>
+        </div>
+        <div class="diff-card">
+          <div class="num">04</div>
+          <h3>Works with the tools already in place</h3>
+          <p>Still have a valid Snyk License? Bring you own Scanner and Correlate findings from Snyk, Trivy, Semgrep,
+            and other scanners into one deployment risk decision as a unified platform.</p>
+        </div>
+      </div>
+    </section>
+    <!-- SNAPSHOT TABLE -->
+    <section>
+      <h2>Comparison Matrix</h2>
+      <p class="section-lede">A concise enterprise capability comparison across the major evaluation categories.
+        Detailed technical matrices are available during technical validation and proof-of-concept engagements.</p>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th class="center">Snyk</th>
+            <th class="center">OpsMx</th>
+            <th class="why">Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Core Application Security</td>
+          </tr>
+          <tr>
+            <td class="cap">SAST</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Detect vulnerabilities in source code before release.</td>
+          </tr>
+          <tr>
+            <td class="cap">SCA</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Manage open-source risk.</td>
+          </tr>
+          <tr>
+            <td class="cap">DAST</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Validate running applications.</td>
+          </tr>
+          <tr>
+            <td class="cap">API Security</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Secure modern APIs.</td>
+          </tr>
+          <tr>
+            <td class="cap">Secrets Detection</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Prevent credential exposure.</td>
+          </tr>
+          <tr>
+            <td class="cap">Container Security</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Protect containerized workloads.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Platform</td>
+          </tr>
+          <tr>
+            <td class="cap">Bring Your Own Scanner</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Preserve existing scanner investments.</td>
+          </tr>
+          <tr>
+            <td class="cap">Multi-scanner Correlation</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Unify security findings.</td>
+          </tr>
+          <tr>
+            <td class="cap">CI/CD Integrations</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Embed security into delivery.</td>
+          </tr>
+          <tr>
+            <td class="cap">REST APIs</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Automate governance.</td>
+          </tr>
+          <tr>
+            <td class="cap">Webhooks</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Connect enterprise workflows.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Enterprise Governance</td>
+          </tr>
+          <tr>
+            <td class="cap">Deployment Firewall</td>
+            <td class="center"><span class="pill no">Not Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Enforce policy before deployment.</td>
+          </tr>
+          <tr>
+            <td class="cap">Delivery Shield</td>
+            <td class="center"><span class="pill no">Not Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Centralize release assurance.</td>
+          </tr>
+          <tr>
+            <td class="cap">Release Readiness</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Govern production readiness.</td>
+          </tr>
+          <tr>
+            <td class="cap">Approval Workflows</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Control exceptions.</td>
+          </tr>
+          <tr>
+            <td class="cap">Deployment Verification</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Validate deployed artifacts.</td>
+          </tr>
+          <tr>
+            <td class="cap">Production Promotion Controls</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Prevent unauthorized releases.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">AI</td>
+          </tr>
+          <tr>
+            <td class="cap">AI Code Validation</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Assess AI-generated code.</td>
+          </tr>
+          <tr>
+            <td class="cap">AI Governance</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Apply AI delivery policy.</td>
+          </tr>
+          <tr>
+            <td class="cap">Prompt Security</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Reduce prompt-related risks.</td>
+          </tr>
+          <tr>
+            <td class="cap">LLM Supply Chain</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Track AI dependencies.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Developer Experience (DevEx)</td>
+          </tr>
+          <tr>
+            <td class="cap">IDE Plugins</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="why">Developer-first security.</td>
+          </tr>
+          <tr>
+            <td class="cap">CLI</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="why">Support local workflows.</td>
+          </tr>
+          <tr>
+            <td class="cap">PR Guidance</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="why">Actionable review feedback.</td>
+          </tr>
+          <tr>
+            <td class="cap">Self-service Security</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Empower development teams.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Cloud Native Security</td>
+          </tr>
+          <tr>
+            <td class="cap">Kubernetes Security</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Protect Kubernetes.</td>
+          </tr>
+          <tr>
+            <td class="cap">GitOps Security</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Govern GitOps deployments.</td>
+          </tr>
+          <tr>
+            <td class="cap">Terraform Security</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Secure infrastructure as code.</td>
+          </tr>
+          <tr>
+            <td class="cap">Runtime Image Validation</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Validate running images.</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background:#f4f7fa;font-weight:800;">Software Supply Chain Security</td>
+          </tr>
+          <tr>
+            <td class="cap">SBOM</td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Inventory software components.</td>
+          </tr>
+          <tr>
+            <td class="cap">DBOM</td>
+            <td class="center"><span class="pill no">Not Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Record deployed software.</td>
+          </tr>
+          <tr>
+            <td class="cap">CBOM</td>
+            <td class="center"><span class="pill no">Not Supported</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Track cryptographic assets.</td>
+          </tr>
+          <tr>
+            <td class="cap">Build Provenance</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Trace build integrity.</td>
+          </tr>
+          <tr>
+            <td class="cap">Deployment Traceability</td>
+            <td class="center"><span class="pill partial">Partial</span></td>
+            <td class="center"><span class="pill yes">Supported</span></td>
+            <td class="why">Link artifacts to deployments.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <!-- HONEST SECTION -->
+    <section class="tight">
+      <div class="honest">
+        <h3>Where Snyk wins — and why that's fine</h3>
+        <p>Snyk's IDE plugins and developer-first workflow are genuinely best-in-class —
+          that's not a talking point to argue around. Most enterprises we talk to already have Snyk, or something like
+          it, and aren't looking to replace it. The conversation that actually lands isn't "switch away from Snyk," it's
+          "your developers are covered — is your production environment?" OpsMx is built to sit downstream of exactly
+          this kind of tool, not compete with it.</p>
+      </div>
+    </section>
+    <!-- CTA -->
+    <section>
+      <div class="cta">
+        <h2>Find the gap in your own pipeline</h2>
+        <p>A 30-minute working session usually surfaces whether a customer's current stack has real deployment-time
+          coverage — or just assumes it does.</p>
+        <div class="cta-buttons">
+          <a class="btn primary" href="#">Book a technical walkthrough</a>
+          <a class="btn secondary" href="#">Request the full capability matrix</a>
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer>
+    <div class="wrap">
+      <p>Prepared for pre-sales conversations. Capability comparisons reflect publicly documented information as of 2026
+        and should be validated against current vendor documentation during technical evaluation. OpsMx and Snyk are
+        trademarks of their respective owners.</p>
+    </div>
+  </footer>
+</body>
+
+</html>
