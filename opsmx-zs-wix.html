@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>OpsMx — Secure the Code. Govern the Release. Prove the Delivery.</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #F6F7F9;
+      font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #0F1620;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border: 1px solid #E4E7EC;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0B5C67 0%, #083F47 100%);
+      color: #fff;
+      padding: 32px 24px;
+      text-align: center;
+      border-bottom: 4px solid #E8622C;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .header .sub {
+      font-size: 13px;
+      color: #D3E6E8;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    .body {
+      padding: 32px 24px;
+    }
+
+    .body p {
+      margin: 0 0 16px;
+      font-size: 14px;
+      line-height: 1.65;
+      color: #4A5364;
+    }
+
+    .body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .body strong {
+      color: #0F1620;
+      font-weight: 700;
+    }
+
+    .intro {
+      background: #EBEBF8;
+      border-left: 4px solid #38399B;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      font-size: 13.5px;
+      color: #0F1620;
+    }
+
+    .intro p {
+      margin: 0;
+    }
+
+    .section {
+      margin: 28px 0;
+    }
+
+    .section h2 {
+      font-size: 16px;
+      font-weight: 800;
+      margin: 0 0 12px;
+      color: #0F1620;
+      letter-spacing: -0.01em;
+    }
+
+    .section p {
+      margin: 0 0 10px;
+    }
+
+    .capability-row {
+      display: flex;
+      margin-bottom: 12px;
+      font-size: 13.5px;
+    }
+
+    .capability-label {
+      font-weight: 700;
+      color: #0B5C67;
+      min-width: 100px;
+      margin-right: 12px;
+    }
+
+    .capability-desc {
+      color: #4A5364;
+    }
+
+/* LIFECYCLE DIAGRAM */
+    .diagram-card {
+      background: #FFFFFF;
+      border: 1px solid #E4E7EC;
+      border-radius: 16px;
+      padding: 28px 24px 20px;
+      box-shadow: 0 1px 3px rgba(15, 22, 32, 0.04);
+    }
+
+    .diagram-caption {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: #8791A0;
+    }
+
+    .diagram-caption span.cap-block {
+      max-width: 420px;
+    }
+
+    .diagram-caption b {
+      color: #0F1620;
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      margin-right: 6px;
+      position: relative;
+      top: 1px;
+    }
+
+    .highlight-box {
+      background: #E5F5EC;
+      border-left: 4px solid #0F7A47;
+      padding: 14px 16px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .highlight-box p {
+      margin: 0;
+      font-size: 13.5px;
+      color: #0F1620;
+    }
+
+    .highlight-box strong {
+      color: #0F7A47;
+    }
+
+    .cta-section {
+      background: linear-gradient(120deg, #083F47, #0E4650);
+      color: #fff;
+      padding: 24px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 28px 0;
+    }
+
+    .cta-section h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .cta-section p {
+      color: #CDE6E8;
+      margin: 0 0 16px;
+      font-size: 13.5px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: #E8622C;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .cta-button:hover {
+      background: #C74F1F;
+    }
+
+    .footer {
+      background: #F6F7F9;
+      padding: 20px 24px;
+      border-top: 1px solid #E4E7EC;
+      font-size: 11.5px;
+      color: #8791A0;
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 0 0 8px;
+    }
+
+    .footer a {
+      color: #0B5C67;
+      text-decoration: none;
+    }
+
+    .list-item {
+      margin-bottom: 8px;
+      font-size: 13.5px;
+      color: #4A5364;
+    }
+
+    .list-item strong {
+      color: #0F1620;
+    }
+
+    @media (max-width: 600px) {
+      .body {
+        padding: 20px 16px;
+      }
+
+      .header {
+        padding: 24px 16px;
+      }
+
+      .header h1 {
+        font-size: 20px;
+      }
+
+      .section h2 {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="email-container">
+    <!-- BODY -->
+    <div class="body">
+      <!-- CODE REVIEW SECTION -->
+      <div class="section">
+        <h2>Code Review. Beyond the Scan.</h2>
+        <p>
+          OpsMx is an application security orchestration platform that unifies multiple AppSec engines from code to production. Beyond scanners, it helps organizations meet the business requirements of their cybersecurity programs with AI-enhanced engines and remediations that prioritizes and fixes real risks.
+        </p>
+
+        <div class="capability-row">
+          <div class="capability-label">SAST</div>
+          <div class="capability-desc">Native integration with Semgrep, SonarQube, and enhanced by our AI-powered analysis. Detect code-level vulnerabilities early: not just patterns, but actual reachability via code flow tracing.</div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">SCA</div>
+          <div class="capability-desc">The most comprehensive compliance coverage by an SCA tool. Inventory the open-source dependencies, transitive risks, and license obligations. Continuous tracking as your supply chain evolves.</div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">Secrets</div>
+          <div class="capability-desc">One of kind approach that embeds secret detection in every engine to ensure along side a dedicated run ensuring no file is left unchecked for Hardcoded credentials, API keys, tokens, all caught before merge, with context about where they'd be exploitable in your actual environment.</div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">Container</div>
+          <div class="capability-desc">Secure your containers with a dual approach: static Dockerfile scanning and build-time analysis of containers themselves. Detect supply chain tampering, configuration drift, and vulnerabilities before deployment.</div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">DAST</div>
+          <div class="capability-desc">OpsMx integrates DAST to catch runtime vulnerabilities your static tools miss. Full test coverage without the coverage gaps.</div>
+        </div>
+      </div>
+
+      <!-- SUPPLY CHAIN SECTION -->
+      <div class="section">
+        <h2>Supply Chain Certainty. From Build to Deployment.</h2>
+        <p>
+          This is where OpsMx fundamentally extends what most platforms do. We don't just tell you what's risky. <strong>We prove what actually shipped, where, and when.</strong>
+        </p>
+
+        <div class="capability-row">
+          <div class="capability-label">SBOM</div>
+          <div class="capability-desc">A 100% Cert-in compliant Software Bill of Materials availabe in SPDX and CycloneDX formats.</div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">DBOM</div>
+          <div class="capability-desc"><strong>Delivery Bill of Materials:</strong> SBOM tells you what's in the code. DBOM tells you what actually got deployed. This is the differentiator.</div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">CBOM</div>
+          <div class="capability-desc">Cryptography Bill of Materials: inventory all cryptographic assets algorithms, key sizes, certificates. Essential for FedRAMP, HIPAA, and post-quantum readiness.</div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">QBOM</div>
+          <div class="capability-desc">Quantum Bill of Materials: map your exposure to post-quantum threats. Know which systems need crypto-agility first.</div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">HBOM</div>
+          <div class="capability-desc">Hardware Bill of Materials: for organizations running on custom or specialized infrastructure, track hardware-level supply chain risks.</div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">AI Remediation</div>
+          <div class="capability-desc">GenAI-guided fix suggestions for every finding. Not just "here's the problem" — <strong>"one click fixes for your vulnerabilities."</strong></div>
+        </div>
+
+        <div class="capability-row">
+          <div class="capability-label">AI Model Scanning</div>
+          <div class="capability-desc">Detect and inventory LLMs and models in your codebase and infrastructure. Scan for prompt injection vectors, unsafe dependencies, and model governance violations.</div>
+        </div>
+      </div>
+
+      <!-- LIFECYCLE DIAGRAM -->
+      <div class="diagram-section">
+        <p>How OpsMx covers the release governance gap that Wiz does not own:</p>
+        <div class="diagram-card">
+          <svg viewbox="0 0 880 195" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <!-- Base timeline -->
+            <line stroke="#DDE2E8" stroke-width="3" x1="60" x2="820" y1="120" y2="120"></line>
+            <!-- OpsMx (full lifecycle) -->
+            <path d="M 60 55 Q 60 40 75 40 L 805 40 Q 820 40 820 55" fill="none" stroke="#0B5C67" stroke-width="4"></path>
+            <text fill="#0B5C67" font-family="-apple-system,Segoe UI,sans-serif" font-size="14" font-weight="700"
+              text-anchor="middle" x="440" y="24">
+              OPSMX — End-to-End Software Delivery Governance
+            </text>
+            <!-- Wiz Code (light, left island) -->
+            <path d="M 60 85 Q 60 70 75 70 L 250 70 Q 265 70 265 85" fill="none" stroke="#38399B" stroke-width="3"
+              stroke-dasharray="6 4"></path>
+            <text fill="#38399B" font-family="-apple-system,Segoe UI,sans-serif" font-size="12" font-weight="700"
+              text-anchor="middle" x="162" y="102">
+              WIZ CODE — lightweight SAST/SCA/secrets
+            </text>
+            <!-- Gap indicator -->
+            <line x1="272" x2="643" y1="70" y2="70" stroke="#C7CDD6" stroke-width="2" stroke-dasharray="3 5"></line>
+            <text fill="#8791A0" font-family="-apple-system,Segoe UI,sans-serif" font-size="11" font-style="italic"
+              text-anchor="middle" x="457" y="62">
+              no release-time control point
+            </text>
+            <!-- Wiz Cloud/Defend (deep, right island) -->
+            <path d="M 650 85 Q 650 70 665 70 L 805 70 Q 820 70 820 85" fill="none" stroke="#38399B" stroke-width="3.5">
+            </path>
+            <text fill="#38399B" font-family="-apple-system,Segoe UI,sans-serif" font-size="12" font-weight="700"
+              text-anchor="middle" x="735" y="102">
+              WIZ CLOUD/DEFEND — deep agentless posture
+            </text>
+            <!-- Stage nodes -->
+            <g font-family="-apple-system,Segoe UI,sans-serif">
+              <circle cx="60" cy="120" fill="#0B5C67" r="9"></circle>
+              <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="60" y="150">Code</text>
+              <circle cx="265" cy="120" fill="#0B5C67" r="9"></circle>
+              <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="265" y="150">Build</text>
+              <circle cx="480" cy="120" fill="#0B5C67" r="10"></circle>
+              <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="480" y="150">Test</text>
+              <circle cx="650" cy="120" fill="#E8622C" r="13"></circle>
+              <text fill="#0F1620" font-size="13" font-weight="800" text-anchor="middle" x="650" y="150">Deploy</text>
+              <text fill="#C74F1F" font-size="10.5" font-weight="700" text-anchor="middle" x="650" y="165">
+                Deployment Firewall
+              </text>
+              <circle cx="820" cy="120" fill="#0B5C67" r="9"></circle>
+              <text fill="#0F1620" font-size="12.5" font-weight="600" text-anchor="middle" x="820"
+                y="150">Production</text>
+            </g>
+          </svg>
+          <div class="diagram-caption">
+            <span class="cap-block">
+              <span class="swatch" style="background:#38399B"></span>
+              <b>Wiz</b> — Lightweight code scanning on one end, deep agentless cloud and runtime posture on the other. Admission control at deploy is Kubernetes-only.
+            </span>
+            <span class="cap-block">
+              <span class="swatch" style="background:#0B5C67"></span>
+              <b>OpsMx</b> — Continuous validation from code to production, with a policy-as-code release gate across every deployment target.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPLIANCE SECTION -->
+      <div class="section">
+        <h2>Compliance That Actually Enforces Itself</h2>
+        <p>
+          Most compliance work happens after deployment. OpsMx flips that: frameworks like <strong>NIST 800-53, FedRAMP, HIPAA, and PCI DSS</strong> are enforced <strong>before</strong> a release reaches production.
+        </p>
+        <ul style="margin: 12px 0; padding-left: 20px; color: #4A5364; font-size: 13.5px;">
+          <li style="margin-bottom: 6px;"><strong>Policy-as-Code:</strong> Compliance rules → automated gates. No manual checklist friction.</li>
+          <li style="margin-bottom: 6px;"><strong>Audit-Ready Reports:</strong> Every deployment generates a DBOM linking code, build, and runtime state to compliance controls.</li>
+          <li><strong>Continuous Monitoring:</strong> Compliance posture tracked in real time, not audited retroactively.</li>
+        </ul>
+      </div>
+
+      <!-- HIGHLIGHT: THE DIFFERENCE -->
+      <div class="highlight-box">
+        <p><strong>Here's what this means in practice:</strong> You're not replacing your current scanning stack. You're adding the release governance layer that ties it all together, proves compliance to regulators, and gives your team confidence that nothing ships that shouldn't.</p>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-section">
+        <h3>Let's Talk Supply Chain Certainty</h3>
+        <p>A 20-minute working session usually surfaces whether your current stack has real deployment-time governance — or just assumes it does.</p>
+        <a href="#" class="cta-button">Discuss Commercial Options</a>
+      </div>
+
+      <!-- CLOSING -->
+      <div class="section">
+        <p style="font-size: 13px; color: #8791A0;">
+          We have a detailed technical comparison and commercial framework tailored to organizations managing supply chain risk at your scale. When you're ready, we'll share both — but first, we'd rather understand your specific constraints and priorities.
+        </p>
+        <p style="font-size: 13px; color: #8791A0; margin-top: 14px;">
+          We'll follow up with a brief note early next week, but if this resonates sooner, reply directly and let's find a time that works.
+        </p>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p><strong>OpsMx — Application Security Posture Management for Continuous Delivery</strong></p>
+      <p style="font-size: 11px;">
+        <a href="#">www.opsmx.com</a> | <a href="#">info@opsmx.com</a>
+      </p>
+      <p style="font-size: 10px; margin-top: 12px;">
+        This email is tailored to your organization's stated priorities in application security and supply chain governance. All capabilities referenced are production-ready as of July 2026.
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>
